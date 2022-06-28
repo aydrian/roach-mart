@@ -1,0 +1,34 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "cockroachdb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String    @id(map: "primary") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt    DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime? @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  username     String    @unique
+  passwordHash String    @map("password_hash")
+
+  @@map("users")
+}
+
+model Product {
+  id          String    @id(map: "primary") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt   DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime? @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  name        String
+  description String
+  price       Decimal
+  units       Int       @default(0) @db.Int4
+  imgUrl      String    @map("img_url")
+
+  @@map("products")
+}

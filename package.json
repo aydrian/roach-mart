@@ -1,0 +1,35 @@
+{
+  "private": true,
+  "sideEffects": false,
+  "scripts": {
+    "build": "remix build",
+    "dev": "remix dev"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
+  },
+  "dependencies": {
+    "@chakra-ui/react": "^2.2.1",
+    "@emotion/react": "^11.9.3",
+    "@emotion/server": "^11.4.0",
+    "@emotion/styled": "^11.9.3",
+    "@prisma/client": "4.0",
+    "@remix-run/node": "^1.6.1",
+    "@remix-run/react": "^1.6.1",
+    "@remix-run/vercel": "^1.6.1",
+    "@vercel/node": "^2.0.0",
+    "framer-motion": "^6.3.16",
+    "react": "18.2",
+    "react-dom": "18.2"
+  },
+  "devDependencies": {
+    "@remix-run/dev": "^1.6.1",
+    "@remix-run/eslint-config": "^1.6.1",
+    "@remix-run/serve": "^1.6.1",
+    "eslint": "^8.15.0",
+    "prisma": "4.0"
+  },
+  "engines": {
+    "node": ">=14"
+  }
+}
