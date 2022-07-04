@@ -1,7 +1,9 @@
+import type { LoaderFunction } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { db } from "~/utils/db.server";
+import type { Product } from "@prisma/client";
 
-export const loader = async () => {
+export const loader: LoaderFunction = async () => {
   const products = await db.product.findMany({
     select: {
       id: true,
@@ -26,13 +28,13 @@ export default function CatalogRoute() {
     <div>
       <h1>Product Catalog</h1>
       <ul>
-        {products.map((product) => {
+        {products.map((product: Product) => {
           return (
             <li key={product.id}>
               <img alt={product.name} src={product.imgUrl} />
               <h3>{product.name}</h3>
               <p>{product.description}</p>
-              <p>{formatCurrency.format(product.price)}</p>
+              <p>{formatCurrency.format(product.price.toNumber())}</p>
               <p>{product.units} left in stock</p>
             </li>
           );

@@ -14,20 +14,26 @@
     "@emotion/server": "^11.4.0",
     "@emotion/styled": "^11.9.3",
     "@prisma/client": "4.0",
-    "@remix-run/node": "^1.6.1",
-    "@remix-run/react": "^1.6.1",
-    "@remix-run/vercel": "^1.6.1",
-    "@vercel/node": "^2.0.0",
+    "@remix-run/node": "^1.6.3",
+    "@remix-run/react": "^1.6.3",
+    "@remix-run/vercel": "^1.6.3",
+    "@vercel/node": "^1.15.2",
+    "bcryptjs": "^2.4.3",
     "framer-motion": "^6.3.16",
     "react": "18.2",
     "react-dom": "18.2"
   },
   "devDependencies": {
-    "@remix-run/dev": "^1.6.1",
-    "@remix-run/eslint-config": "^1.6.1",
-    "@remix-run/serve": "^1.6.1",
+    "@remix-run/dev": "^1.6.3",
+    "@remix-run/eslint-config": "^1.6.3",
+    "@remix-run/serve": "^1.6.3",
+    "@types/bcryptjs": "^2.4.2",
+    "@types/react": "^18.0.14",
+    "@types/react-dom": "^18.0.5",
+    "esbuild-register": "^3.3.2",
     "eslint": "^8.15.0",
-    "prisma": "4.0"
+    "prisma": "4.0",
+    "typescript": "^4.6.4"
   },
   "engines": {
     "node": ">=14"
