@@ -1,8 +1,8 @@
-import type { LoaderFunction } from "@remix-run/node";
+import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import type { Product } from "@prisma/client";
 import { useLoaderData } from "@remix-run/react";
 import { db } from "~/utils/db.server";
-import { getUser } from "~/utils/session.server";
+import { requireUserId } from "~/utils/session.server";
 import { Heading, Stack, VStack } from "@chakra-ui/react";
 
 import { ProductCard } from "~/components/product-card";
@@ -23,6 +23,21 @@ export const loader: LoaderFunction = async () => {
   });
 
   return { products };
+};
+
+export const action: ActionFunction = async ({ request }) => {
+  const userId = await requireUserId(request);
+  const form = await request.formData();
+
+  const intent = await form.get("intent");
+
+  if (intent === "addToCart") {
+    const id = form.get("id");
+
+    // insert into cart items table.
+  }
+
+  return "ok";
 };
 
 export default function CatalogRoute() {

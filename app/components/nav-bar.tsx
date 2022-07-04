@@ -2,6 +2,7 @@ import { Link as RemixLink } from "@remix-run/react";
 import {
   Avatar,
   Box,
+  Button,
   Flex,
   HStack,
   Icon,
@@ -31,6 +32,9 @@ export default function NavBar({ user }: NavBarProps) {
           </Link>
           <Text fontWeight="light">Welcome, {user.username}</Text>
           <Avatar size={"sm"} name={user.username} />
+          <form method="post" action="/logout">
+            <Button type="submit">Logout</Button>
+          </form>
         </HStack>
       </Flex>
     </Box>
