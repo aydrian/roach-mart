@@ -1,5 +1,5 @@
-import type { ActionFunction } from "@remix-run/node";
-import { json } from "@remix-run/node";
+import type { ActionFunction, LoaderFunction } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import { Form, useActionData, useSearchParams } from "@remix-run/react";
 import {
   Flex,
@@ -18,8 +18,21 @@ import {
   FormErrorMessage
 } from "@chakra-ui/react";
 
-import { login, createUserSession, register } from "~/utils/session.server";
+import {
+  login,
+  createUserSession,
+  register,
+  getUserId
+} from "~/utils/session.server";
 import { db } from "~/utils/db.server";
+
+export const loader: LoaderFunction = async ({ request }) => {
+  const userId = await getUserId(request);
+  if (userId) {
+    return redirect("/catalog");
+  }
+  return { ok: true };
+};
 
 function validateUsername(username: unknown) {
   if (typeof username !== "string" || username.length < 3) {

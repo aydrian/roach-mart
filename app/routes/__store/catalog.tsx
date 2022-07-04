@@ -5,11 +5,9 @@ import { db } from "~/utils/db.server";
 import { getUser } from "~/utils/session.server";
 import { Heading, Stack, VStack } from "@chakra-ui/react";
 
-import Layout from "~/components/layout";
 import { ProductCard } from "~/components/product-card";
 
-export const loader: LoaderFunction = async ({ request }) => {
-  const user = await getUser(request);
+export const loader: LoaderFunction = async () => {
   const products = await db.product.findMany({
     select: {
       id: true,
@@ -24,17 +22,13 @@ export const loader: LoaderFunction = async ({ request }) => {
     }
   });
 
-  return { products, user };
+  return { products };
 };
 
 export default function CatalogRoute() {
-  const { products, user } = useLoaderData();
-  const formatCurrency = Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD"
-  });
+  const { products } = useLoaderData();
   return (
-    <Layout user={user}>
+    <>
       <VStack spacing="2" textAlign="center">
         <Heading as="h1">Products</Heading>
       </VStack>
@@ -49,6 +43,6 @@ export default function CatalogRoute() {
           return <ProductCard product={product} key={product.id} />;
         })}
       </Stack>
-    </Layout>
+    </>
   );
 }
