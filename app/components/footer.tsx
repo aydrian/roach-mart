@@ -8,7 +8,7 @@ export default function Footer() {
       as="footer"
       w="100%"
       p="4"
-      bgColor="#7928CA"
+      bgColor="#0037A5"
       textAlign="center"
       textColor="whiteAlpha.900"
     >

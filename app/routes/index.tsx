@@ -212,7 +212,7 @@ export default function Index() {
                   <FormErrorMessage>{actionData.formError}</FormErrorMessage>
                 ) : undefined}
                 <Button
-                  bg={"blue.400"}
+                  bg={"#0037A5"}
                   color={"white"}
                   _hover={{
                     bg: "blue.500"

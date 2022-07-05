@@ -1,4 +1,5 @@
 import type { Product } from "@prisma/client";
+import { Form } from "@remix-run/react";
 import {
   Box,
   Button,
@@ -16,8 +17,7 @@ type ProductCardProps = {
 
 export function ProductCard({ product }: ProductCardProps) {
   return (
-    <form method="post">
-      <input type="hidden" name="id" value={product.id} />
+    <Form method="post" replace>
       <Box
         role={"group"}
         p={6}
@@ -76,6 +76,7 @@ export function ProductCard({ product }: ProductCardProps) {
             </Text>
           </Stack>
         </Stack>
+        <input type="hidden" name="id" value={product.id} />
         <Button
           type="submit"
           name="intent"
@@ -83,7 +84,7 @@ export function ProductCard({ product }: ProductCardProps) {
           leftIcon={<BsCart4 />}
           w={"full"}
           mt={8}
-          bg={useColorModeValue("#151f21", "gray.900")}
+          bg={useColorModeValue("#0037A5", "gray.900")}
           color={"white"}
           rounded={"md"}
           _hover={{
@@ -94,6 +95,6 @@ export function ProductCard({ product }: ProductCardProps) {
           Add to Cart
         </Button>
       </Box>
-    </form>
+    </Form>
   );
 }

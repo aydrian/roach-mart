@@ -6,7 +6,7 @@ export default function Header() {
       as="header"
       w="100%"
       p="4"
-      bgGradient="linear(to-l, #7928CA, #FF0080)"
+      bgGradient="linear(to-r, #0037A5, #6933FF, #00FCED)"
       textAlign="center"
       textColor="whiteAlpha.900"
     >
