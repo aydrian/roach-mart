@@ -9,7 +9,20 @@ import { Prisma } from "@prisma/client";
 import invariant from "tiny-invariant";
 import { db } from "~/utils/db.server";
 import { requireUserId } from "~/utils/session.server";
-import { Heading, IconButton, Text, VStack } from "@chakra-ui/react";
+import {
+  Heading,
+  IconButton,
+  Image,
+  Text,
+  VStack,
+  TableContainer,
+  Table,
+  Tbody,
+  Th,
+  Tr,
+  Td,
+  Tfoot
+} from "@chakra-ui/react";
 import { BsTrash } from "react-icons/bs";
 
 type CartItemWithProduct = Prisma.CartItemGetPayload<{
@@ -19,6 +32,7 @@ type CartItemWithProduct = Prisma.CartItemGetPayload<{
       select: {
         name: true;
         price: true;
+        imgUrl: true;
       };
     };
   };
@@ -34,10 +48,21 @@ export const loader: LoaderFunction = async ({ request }) => {
   const userId = await requireUserId(request);
 
   const items = await db.cartItem.findMany({
-    select: { id: true, product: { select: { name: true, price: true } } },
+    select: {
+      id: true,
+      product: { select: { name: true, price: true, imgUrl: true } }
+    },
     where: { userId },
     orderBy: { createdAt: "asc" }
   });
+
+  // const groupedItems = await db.cartItem.groupBy({
+  //   by: ["productId"],
+  //   _count: {
+  //     productId: true
+  //   }
+  // });
+  // console.log(groupedItems);
 
   const total = items.reduce(
     (partialTotal, a) => Prisma.Decimal.add(partialTotal, a.product.price),
@@ -73,26 +98,48 @@ export default function Cart() {
   return (
     <VStack spacing="2" textAlign="center">
       <Heading as="h1">Cart</Heading>
-      <ul>
-        {items.map((item: CartItemWithProduct) => (
-          <li key={item.id}>
-            <Form method="post" replace>
-              <input type="hidden" name="id" value={item.id} />
-              {item.product.name}{" "}
-              {numFormat.format(Number(item.product.price.toString()))}
-              <IconButton
-                aria-label="Delete Item"
-                type="submit"
-                name="intent"
-                value="deleteItem"
-                icon={<BsTrash />}
-                size="sm"
-              />
-            </Form>
-          </li>
-        ))}
-      </ul>
-      <Text>Total: {numFormat.format(total.toString())}</Text>
+      <TableContainer>
+        <Table variant="simple" size="sm" minWidth="75%">
+          <Tbody>
+            {items.map((item: CartItemWithProduct) => (
+              <Tr key={item.id}>
+                <Td>
+                  <Image
+                    rounded={"lg"}
+                    height={50}
+                    width={50}
+                    objectFit={"cover"}
+                    src={item.product.imgUrl}
+                  />
+                </Td>
+                <Td>{item.product.name}</Td>
+                <Td>
+                  {numFormat.format(Number(item.product.price.toString()))}
+                </Td>
+                <Td>
+                  <Form method="post" replace>
+                    <input type="hidden" name="id" value={item.id} />
+                    <IconButton
+                      aria-label="Delete Item"
+                      type="submit"
+                      name="intent"
+                      value="deleteItem"
+                      icon={<BsTrash />}
+                      size="sm"
+                    />
+                  </Form>
+                </Td>
+              </Tr>
+            ))}
+          </Tbody>
+          <Tfoot>
+            <Th>{}</Th>
+            <Th>Total</Th>
+            <Th>{numFormat.format(total.toString())}</Th>
+            <Th>{}</Th>
+          </Tfoot>
+        </Table>
+      </TableContainer>
     </VStack>
   );
 }
