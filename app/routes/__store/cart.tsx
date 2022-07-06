@@ -3,7 +3,6 @@ import type {
   LoaderFunction,
   MetaFunction
 } from "@remix-run/node";
-import type { CartItem } from "@prisma/client";
 import { Form, useLoaderData } from "@remix-run/react";
 import { Response } from "@remix-run/node";
 import { Prisma } from "@prisma/client";
@@ -11,6 +10,18 @@ import invariant from "tiny-invariant";
 import { db } from "~/utils/db.server";
 import { requireUserId } from "~/utils/session.server";
 import { Button, Heading, Text, VStack } from "@chakra-ui/react";
+
+type CartItemWithProduct = Prisma.CartItemGetPayload<{
+  select: {
+    id: true;
+    product: {
+      select: {
+        name: true;
+        price: true;
+      };
+    };
+  };
+}>;
 
 export const meta: MetaFunction = () => {
   return {
@@ -61,12 +72,12 @@ export default function Cart() {
     <VStack spacing="2" textAlign="center">
       <Heading as="h1">Cart</Heading>
       <ul>
-        {items.map((item: CartItem) => (
+        {items.map((item: CartItemWithProduct) => (
           <li key={item.id}>
             <Form method="post" replace>
               <input type="hidden" name="id" value={item.id} />
               {item.product.name}{" "}
-              {numFormat.format(item.product.price.toString())}
+              {numFormat.format(Number(item.product.price.toString()))}
               <Button type="submit" name="intent" value="deleteItem">
                 Delete
               </Button>

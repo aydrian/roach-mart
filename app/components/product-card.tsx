@@ -72,7 +72,7 @@ export function ProductCard({ product }: ProductCardProps) {
               {new Intl.NumberFormat("en-US", {
                 style: "currency",
                 currency: "USD"
-              }).format(product.price.toString())}
+              }).format(Number(product.price.toString()))}
             </Text>
           </Stack>
         </Stack>
