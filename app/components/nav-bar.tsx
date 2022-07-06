@@ -1,4 +1,5 @@
 import { Link as RemixLink } from "@remix-run/react";
+import { Prisma } from "@prisma/client";
 import {
   Avatar,
   Box,
@@ -11,10 +12,17 @@ import {
   useColorModeValue
 } from "@chakra-ui/react";
 import { BsCart4 } from "react-icons/bs";
-import type { User } from "@prisma/client";
+
+type UserWithCart = Prisma.UserGetPayload<{
+  select: {
+    id: true;
+    username: true;
+    cartItems: true;
+  };
+}>;
 
 type NavBarProps = {
-  user: User;
+  user: UserWithCart;
 };
 
 export default function NavBar({ user }: NavBarProps) {

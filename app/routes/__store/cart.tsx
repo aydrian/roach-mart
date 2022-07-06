@@ -9,7 +9,8 @@ import { Prisma } from "@prisma/client";
 import invariant from "tiny-invariant";
 import { db } from "~/utils/db.server";
 import { requireUserId } from "~/utils/session.server";
-import { Button, Heading, Text, VStack } from "@chakra-ui/react";
+import { Heading, IconButton, Text, VStack } from "@chakra-ui/react";
+import { BsTrash } from "react-icons/bs";
 
 type CartItemWithProduct = Prisma.CartItemGetPayload<{
   select: {
@@ -78,9 +79,14 @@ export default function Cart() {
               <input type="hidden" name="id" value={item.id} />
               {item.product.name}{" "}
               {numFormat.format(Number(item.product.price.toString()))}
-              <Button type="submit" name="intent" value="deleteItem">
-                Delete
-              </Button>
+              <IconButton
+                aria-label="Delete Item"
+                type="submit"
+                name="intent"
+                value="deleteItem"
+                icon={<BsTrash />}
+                size="sm"
+              />
             </Form>
           </li>
         ))}
