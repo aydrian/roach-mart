@@ -30,8 +30,8 @@ export default function NavBar({ user }: NavBarProps) {
     <Box bg={useColorModeValue("#C2D5FF", "gray.900")} px="4">
       <Flex h={14} alignItems={"center"} justifyContent={"space-between"}>
         <Box>
-          <Link as={RemixLink} to="/">
-            <Text fontWeight="medium">Roach Mart</Text>
+          <Link as={RemixLink} to="/catalog">
+            <Text fontWeight="medium">Product Catalog</Text>
           </Link>
         </Box>
         <HStack>
