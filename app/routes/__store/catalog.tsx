@@ -6,6 +6,7 @@ import type {
 import type { Product } from "@prisma/client";
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
+import invariant from "tiny-invariant";
 import { db } from "~/utils/db.server";
 import { requireUserId } from "~/utils/session.server";
 import { Heading, Stack, VStack } from "@chakra-ui/react";
@@ -43,11 +44,8 @@ export const action: ActionFunction = async ({ request }) => {
   const intent = await form.get("intent");
 
   if (intent === "addToCart") {
-    const productId = form.get("id")?.toString();
-
-    if (!productId) {
-      return json({ message: "product not specified" }, { status: 400 });
-    }
+    const productId = form.get("id");
+    invariant(typeof productId === "string", `productId must be a string`);
 
     await db.cartItem.create({ data: { productId, userId } });
     return json("Created", { status: 201 });

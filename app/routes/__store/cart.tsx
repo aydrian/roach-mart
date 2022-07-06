@@ -5,8 +5,9 @@ import type {
 } from "@remix-run/node";
 import type { CartItem } from "@prisma/client";
 import { Form, useLoaderData } from "@remix-run/react";
-import { json, Response } from "@remix-run/node";
+import { Response } from "@remix-run/node";
 import { Prisma } from "@prisma/client";
+import invariant from "tiny-invariant";
 import { db } from "~/utils/db.server";
 import { requireUserId } from "~/utils/session.server";
 import { Button, Heading, Text, VStack } from "@chakra-ui/react";
@@ -39,7 +40,8 @@ export const action: ActionFunction = async ({ request }) => {
   const intent = await form.get("intent");
 
   if (intent === "deleteItem") {
-    const id = form.get("id")?.toString();
+    const id = form.get("id");
+    invariant(typeof id === "string", `id must be a string`);
 
     await db.cartItem.delete({ where: { id } });
 
@@ -51,7 +53,6 @@ export const action: ActionFunction = async ({ request }) => {
 
 export default function Cart() {
   const { items, total } = useLoaderData();
-  console.log("LoaderData: ", items, total);
   const numFormat = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD"
