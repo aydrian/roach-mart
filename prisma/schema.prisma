@@ -36,11 +36,12 @@ model Product {
 }
 
 model CartItem {
-  id        String  @id(map: "primary") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  productId String  @map("product_id") @db.Uuid
-  userId    String  @map("user_id") @db.Uuid
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_product_id_ref_products")
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_user_id_ref_users")
+  id        String    @id(map: "primary") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  productId String    @map("product_id") @db.Uuid
+  userId    String    @map("user_id") @db.Uuid
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  product   Product   @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_product_id_ref_products")
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_user_id_ref_users")
 
   @@map("cart_items")
 }

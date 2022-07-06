@@ -35,7 +35,8 @@ export const loader: LoaderFunction = async ({ request }) => {
 
   const items = await db.cartItem.findMany({
     select: { id: true, product: { select: { name: true, price: true } } },
-    where: { userId }
+    where: { userId },
+    orderBy: { createdAt: "asc" }
   });
 
   const total = items.reduce(
