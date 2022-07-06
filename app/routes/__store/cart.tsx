@@ -5,7 +5,7 @@ import type {
 } from "@remix-run/node";
 import type { CartItem } from "@prisma/client";
 import { Form, useLoaderData } from "@remix-run/react";
-import { json } from "@remix-run/node";
+import { json, Response } from "@remix-run/node";
 import { Prisma } from "@prisma/client";
 import { db } from "~/utils/db.server";
 import { requireUserId } from "~/utils/session.server";
@@ -42,7 +42,8 @@ export const action: ActionFunction = async ({ request }) => {
     const id = form.get("id")?.toString();
 
     await db.cartItem.delete({ where: { id } });
-    return json({ message: "Deleted" }, { status: 204 });
+
+    return new Response(null, { status: 204 });
   }
 
   return { message: "ok" };
