@@ -13,7 +13,6 @@ import {
   Heading,
   IconButton,
   Image,
-  Text,
   VStack,
   TableContainer,
   Table,
@@ -37,6 +36,16 @@ type CartItemWithProduct = Prisma.CartItemGetPayload<{
     };
   };
 }>;
+
+// type GroupedProduct = Prisma.ProductGetPayload<{
+//   select: {
+//     id: true;
+//     name: true;
+//     price: true;
+//     imgUrl: true;
+//     _count: true;
+//   };
+// }>;
 
 export const meta: MetaFunction = () => {
   return {
@@ -64,11 +73,22 @@ export const loader: LoaderFunction = async ({ request }) => {
   // });
   // console.log(groupedItems);
 
+  // const groupedItems = await db.product.groupBy({
+  //   by: ["id", "name", "price", "imgUrl"],
+  //   where: {
+  //     CartItem: { some: { userId } }
+  //   },
+  //   _count: { _all: true },
+  //   _sum: { price: true }
+  // });
+  // console.log(groupedItems);
+
   const total = items.reduce(
     (partialTotal, a) => Prisma.Decimal.add(partialTotal, a.product.price),
     new Prisma.Decimal(0)
   );
 
+  // return { items, groupedItems, total };
   return { items, total };
 };
 
@@ -90,6 +110,7 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function Cart() {
+  //const { items, groupedItems, total } = useLoaderData();
   const { items, total } = useLoaderData();
   const numFormat = new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -102,6 +123,7 @@ export default function Cart() {
         <Table variant="simple" size="sm" minWidth="75%">
           <Tbody>
             {items.map((item: CartItemWithProduct) => (
+              // groupedItems.map((item: GroupedProduct) => (
               <Tr key={item.id}>
                 <Td>
                   <Image
@@ -113,6 +135,7 @@ export default function Cart() {
                   />
                 </Td>
                 <Td>{item.product.name}</Td>
+                {/* <Td>{item._count._all}</Td> */}
                 <Td>
                   {numFormat.format(Number(item.product.price.toString()))}
                 </Td>
@@ -134,6 +157,7 @@ export default function Cart() {
           </Tbody>
           <Tfoot>
             <Th>{}</Th>
+            {/* <Th>{}</Th> */}
             <Th>Total</Th>
             <Th>{numFormat.format(total.toString())}</Th>
             <Th>{}</Th>

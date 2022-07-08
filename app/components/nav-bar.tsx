@@ -6,8 +6,10 @@ import {
   Button,
   Flex,
   HStack,
-  Icon,
   Link,
+  Tag,
+  TagLabel,
+  TagLeftIcon,
   Text,
   useColorModeValue
 } from "@chakra-ui/react";
@@ -35,12 +37,16 @@ export default function NavBar({ user }: NavBarProps) {
           </Link>
         </Box>
         <HStack>
-          <Link as={RemixLink} to="/cart">
-            <Icon as={BsCart4} />{" "}
-            {user.cartItems.length > 0 ? ` (${user.cartItems.length})` : ""}
-          </Link>
-          <Text fontWeight="light">Welcome, {user.username}</Text>
+          <Text fontWeight="medium">Welcome, {user.username}</Text>
           <Avatar size={"sm"} name={user.username} />
+          <Link as={RemixLink} to="/cart" _hover={{ textDecoration: "none" }}>
+            <Tag size="lg" borderRadius="full">
+              <TagLeftIcon boxSize="16px" as={BsCart4} />
+              {user.cartItems.length > 0 ? (
+                <TagLabel>{user.cartItems.length}</TagLabel>
+              ) : null}
+            </Tag>{" "}
+          </Link>
           <form method="post" action="/logout">
             <Button type="submit" size="sm">
               Logout
