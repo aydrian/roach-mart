@@ -3,10 +3,12 @@ import type {
   LoaderFunction,
   MetaFunction
 } from "@remix-run/node";
+import type { CartItem } from "@prisma/client";
 import { Form, useLoaderData } from "@remix-run/react";
 import { Response } from "@remix-run/node";
 import { Prisma } from "@prisma/client";
 import invariant from "tiny-invariant";
+import moment from "moment";
 import { db } from "~/utils/db.server";
 import { requireUserId } from "~/utils/session.server";
 import {
@@ -24,18 +26,19 @@ import {
 } from "@chakra-ui/react";
 import { BsTrash } from "react-icons/bs";
 
-type CartItemWithProduct = Prisma.CartItemGetPayload<{
-  select: {
-    id: true;
-    product: {
-      select: {
-        name: true;
-        price: true;
-        imgUrl: true;
-      };
-    };
-  };
-}>;
+// type CartItemWithProduct = Prisma.CartItemGetPayload<{
+//   select: {
+//     id: true;
+//     product: {
+//       select: {
+//         id: true;
+//         name: true;
+//         price: true;
+//         imgUrl: true;
+//       };
+//     };
+//   };
+// }>;
 
 // type GroupedProduct = Prisma.ProductGetPayload<{
 //   select: {
@@ -59,9 +62,14 @@ export const loader: LoaderFunction = async ({ request }) => {
   const items = await db.cartItem.findMany({
     select: {
       id: true,
-      product: { select: { name: true, price: true, imgUrl: true } }
+      productId: true,
+      productName: true,
+      productPrice: true,
+      productImgUrl: true,
+      expiration: true
+      // product: { select: { id: true, name: true, price: true, imgUrl: true } }
     },
-    where: { userId },
+    where: { userId, expiration: { gt: new Date() } },
     orderBy: { createdAt: "asc" }
   });
 
@@ -84,7 +92,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   // console.log(groupedItems);
 
   const total = items.reduce(
-    (partialTotal, a) => Prisma.Decimal.add(partialTotal, a.product.price),
+    (partialTotal, a) => Prisma.Decimal.add(partialTotal, a.productPrice),
     new Prisma.Decimal(0)
   );
 
@@ -105,6 +113,24 @@ export const action: ActionFunction = async ({ request }) => {
 
     return new Response(null, { status: 204 });
   }
+  // } else if (intent == "deleteOldest") {
+  //   const userId = await requireUserId(request);
+  //   const productId = form.get("productId");
+  //   invariant(typeof productId === "string", `productId must be a string`);
+
+  //   const item = await db.cartItem.findFirst({
+  //     select: { id: true },
+  //     where: {
+  //       userId,
+  //       productId
+  //     },
+  //     orderBy: { createdAt: "asc" }
+  //   });
+  //   invariant(typeof item.id === "string", `cartItem.id must be a string`);
+
+  //   await db.cartItem.delete({ where: { id: item.id } });
+  //   return new Response(null, { status: 204 });
+  // }
 
   return { message: "ok" };
 };
@@ -122,7 +148,7 @@ export default function Cart() {
       <TableContainer>
         <Table variant="simple" size="sm" minWidth="75%">
           <Tbody>
-            {items.map((item: CartItemWithProduct) => (
+            {items.map((item: CartItem /*CartItemWithProduct*/) => (
               // groupedItems.map((item: GroupedProduct) => (
               <Tr key={item.id}>
                 <Td>
@@ -131,17 +157,23 @@ export default function Cart() {
                     height={50}
                     width={50}
                     objectFit={"cover"}
-                    src={item.product.imgUrl}
+                    src={item.productImgUrl}
                   />
                 </Td>
-                <Td>{item.product.name}</Td>
+                <Td>{item.productName}</Td>
                 {/* <Td>{item._count._all}</Td> */}
                 <Td>
-                  {numFormat.format(Number(item.product.price.toString()))}
+                  {numFormat.format(Number(item.productPrice.toString()))}
                 </Td>
+                <Td>Expires {moment(item.expiration).fromNow()}</Td>
                 <Td>
                   <Form method="post" replace>
                     <input type="hidden" name="id" value={item.id} />
+                    <input
+                      type="hidden"
+                      name="productId"
+                      value={item.productId}
+                    />
                     <IconButton
                       aria-label="Delete Item"
                       type="submit"
@@ -160,6 +192,7 @@ export default function Cart() {
             {/* <Th>{}</Th> */}
             <Th>Total</Th>
             <Th>{numFormat.format(total.toString())}</Th>
+            <Th>{}</Th>
             <Th>{}</Th>
           </Tfoot>
         </Table>

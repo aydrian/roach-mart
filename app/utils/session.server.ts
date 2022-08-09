@@ -81,7 +81,7 @@ export async function getUser(request: Request) {
   try {
     const user = await db.user.findUnique({
       where: { id: userId },
-      select: { id: true, username: true, cartItems: true }
+      select: { id: true, username: true }
     });
     return user;
   } catch {

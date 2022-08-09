@@ -1,5 +1,6 @@
 import { Link as RemixLink } from "@remix-run/react";
-import { Prisma } from "@prisma/client";
+import type { User } from "@prisma/client";
+// import { Prisma } from "@prisma/client";
 import {
   Avatar,
   Box,
@@ -15,19 +16,20 @@ import {
 } from "@chakra-ui/react";
 import { BsCart4 } from "react-icons/bs";
 
-type UserWithCart = Prisma.UserGetPayload<{
-  select: {
-    id: true;
-    username: true;
-    cartItems: true;
-  };
-}>;
+// type UserWithCart = Prisma.UserGetPayload<{
+//   select: {
+//     id: true;
+//     username: true;
+//     cartItems: true;
+//   };
+// }>;
 
 type NavBarProps = {
-  user: UserWithCart;
+  user: User;
+  cartItemCount: number;
 };
 
-export default function NavBar({ user }: NavBarProps) {
+export default function NavBar({ user, cartItemCount }: NavBarProps) {
   return (
     <Box bg={useColorModeValue("#C2D5FF", "gray.900")} px="4">
       <Flex h={14} alignItems={"center"} justifyContent={"space-between"}>
@@ -42,9 +44,7 @@ export default function NavBar({ user }: NavBarProps) {
           <Link as={RemixLink} to="/cart" _hover={{ textDecoration: "none" }}>
             <Tag size="lg" borderRadius="full">
               <TagLeftIcon boxSize="16px" as={BsCart4} />
-              {user.cartItems.length > 0 ? (
-                <TagLabel>{user.cartItems.length}</TagLabel>
-              ) : null}
+              {cartItemCount > 0 ? <TagLabel>{cartItemCount}</TagLabel> : null}
             </Tag>{" "}
           </Link>
           <form method="post" action="/logout">

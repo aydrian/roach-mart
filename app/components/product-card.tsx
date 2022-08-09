@@ -77,6 +77,9 @@ export function ProductCard({ product }: ProductCardProps) {
           </Stack>
         </Stack>
         <input type="hidden" name="id" value={product.id} />
+        <input type="hidden" name="name" value={product.name} />
+        <input type="hidden" name="price" value={product.price.toString()} />
+        <input type="hidden" name="imgUrl" value={product.imgUrl} />
         <Button
           type="submit"
           name="intent"
