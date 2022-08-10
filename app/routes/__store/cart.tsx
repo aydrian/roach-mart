@@ -8,7 +8,6 @@ import { Form, useLoaderData } from "@remix-run/react";
 import { Response } from "@remix-run/node";
 import { Prisma } from "@prisma/client";
 import invariant from "tiny-invariant";
-import moment from "moment";
 import { db } from "~/utils/db.server";
 import { requireUserId } from "~/utils/session.server";
 import {
@@ -25,6 +24,7 @@ import {
   Tfoot
 } from "@chakra-ui/react";
 import { BsTrash } from "react-icons/bs";
+import { CountdownTimer } from "~/components/countdown-timer";
 
 // type CartItemWithProduct = Prisma.CartItemGetPayload<{
 //   select: {
@@ -165,7 +165,10 @@ export default function Cart() {
                 <Td>
                   {numFormat.format(Number(item.productPrice.toString()))}
                 </Td>
-                <Td>Expires {moment(item.expiration).fromNow()}</Td>
+                <Td>
+                  Expires in{" "}
+                  <CountdownTimer targetDate={item.expiration || new Date()} />
+                </Td>
                 <Td>
                   <Form method="post" replace>
                     <input type="hidden" name="id" value={item.id} />
