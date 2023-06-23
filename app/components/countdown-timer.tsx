@@ -1,10 +1,6 @@
 import { useEffect, useState } from "react";
 
-type CountdownTimerProps = {
-  targetDate: Date;
-};
-
-export function CountdownTimer({ targetDate }: CountdownTimerProps) {
+export function CountdownTimer({ targetDate }: { targetDate: Date }) {
   console.log(targetDate);
   const countDownDate = new Date(targetDate).getTime();
 

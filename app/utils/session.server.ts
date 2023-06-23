@@ -1,23 +1,23 @@
-import bcrypt from "bcryptjs";
 import { createCookieSessionStorage, redirect } from "@remix-run/node";
+import bcrypt from "bcryptjs";
 
-import { db } from "./db.server";
+import { prisma } from "./db.server";
 
 type LoginForm = {
-  username: string;
   password: string;
+  username: string;
 };
 
-export async function register({ username, password }: LoginForm) {
+export async function register({ password, username }: LoginForm) {
   const passwordHash = await bcrypt.hash(password, 10);
-  const user = await db.user.create({
-    data: { username, passwordHash }
+  const user = await prisma.user.create({
+    data: { passwordHash, username }
   });
   return { id: user.id, username };
 }
 
-export async function login({ username, password }: LoginForm) {
-  const user = await db.user.findUnique({
+export async function login({ password, username }: LoginForm) {
+  const user = await prisma.user.findUnique({
     where: { username }
   });
   if (!user) return null;
@@ -35,16 +35,16 @@ if (!sessionSecret) {
 
 const storage = createCookieSessionStorage({
   cookie: {
-    name: "RJ_session",
+    httpOnly: true,
     // normally you want this to be `secure: true`
     // but that doesn't work on localhost for Safari
-    // https://web.dev/when-to-use-local-https/
-    secure: process.env.NODE_ENV === "production",
-    secrets: [sessionSecret],
-    sameSite: "lax",
-    path: "/",
     maxAge: 60 * 60 * 24 * 30,
-    httpOnly: true
+    name: "RJ_session",
+    path: "/",
+    sameSite: "lax",
+    secrets: [sessionSecret],
+    // https://web.dev/when-to-use-local-https/
+    secure: process.env.NODE_ENV === "production"
   }
 });
 
@@ -79,9 +79,9 @@ export async function getUser(request: Request) {
   }
 
   try {
-    const user = await db.user.findUnique({
-      where: { id: userId },
-      select: { id: true, username: true }
+    const user = await prisma.user.findUnique({
+      select: { id: true, username: true },
+      where: { id: userId }
     });
     return user;
   } catch {

@@ -1,9 +1,10 @@
 // entry.server.tsx
-import { renderToString } from "react-dom/server";
+import type { EntryContext } from "@remix-run/node";
+
 import { CacheProvider } from "@emotion/react";
 import createEmotionServer from "@emotion/server/create-instance";
 import { RemixServer } from "@remix-run/react";
-import type { EntryContext } from "@remix-run/node"; // Depends on the runtime you choose
+import { renderToString } from "react-dom/server"; // Depends on the runtime you choose
 
 import { ServerStyleContext } from "./context";
 import createEmotionCache from "./createEmotionCache";
@@ -38,7 +39,7 @@ export default function handleRequest(
   responseHeaders.set("Content-Type", "text/html");
 
   return new Response(`<!DOCTYPE html>${markup}`, {
-    status: responseStatusCode,
-    headers: responseHeaders
+    headers: responseHeaders,
+    status: responseStatusCode
   });
 }

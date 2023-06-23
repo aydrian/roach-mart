@@ -1,12 +1,11 @@
-import type { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
+import type { DataFunctionArgs,  } from "@remix-run/node";
 
 import { logout } from "~/utils/session.server";
 
-export const action: ActionFunction = async ({ request }) => {
+export const action = async ({ request }: DataFunctionArgs) => {
   return logout(request);
 };
 
-export const loader: LoaderFunction = async () => {
-  return redirect("/");
+export const loader = async ({request}: DataFunctionArgs) => {
+  return logout(request);
 };

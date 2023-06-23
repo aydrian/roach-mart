@@ -1,10 +1,10 @@
 // context.tsx
-import React, { createContext } from "react";
+import { createContext } from "react";
 
 export interface ServerStyleContextData {
-  key: string;
-  ids: Array<string>;
   css: string;
+  ids: Array<string>;
+  key: string;
 }
 
 export const ServerStyleContext = createContext<

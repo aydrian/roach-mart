@@ -1,7 +1,7 @@
 // root.tsx
-import React, { useContext, useEffect } from "react";
-import { withEmotionCache } from "@emotion/react";
 import { ChakraProvider } from "@chakra-ui/react";
+import { withEmotionCache } from "@emotion/react";
+import { type LinksFunction, type V2_MetaFunction } from "@remix-run/node";
 import {
   Links,
   LiveReload,
@@ -10,15 +10,16 @@ import {
   Scripts,
   ScrollRestoration
 } from "@remix-run/react";
-import { MetaFunction, LinksFunction } from "@remix-run/node"; // Depends on the runtime you choose
+import React, { useContext, useEffect } from "react"; // Depends on the runtime you choose
 
-import { ServerStyleContext, ClientStyleContext } from "./context";
+import { ClientStyleContext, ServerStyleContext } from "./context";
+import styles from "./tailwind.css";
 
-export const meta: MetaFunction = () => ({
-  charset: "utf-8",
-  title: "Roach Mart",
-  viewport: "width=device-width,initial-scale=1"
-});
+export const meta: V2_MetaFunction = () => [
+  { charset: "utf-8" },
+  { title: "Roach Mart" },
+  { viewport: "width=device-width,initial-scale=1" }
+];
 
 // export let links: LinksFunction = () => {
 //   return [
@@ -30,6 +31,11 @@ export const meta: MetaFunction = () => ({
 //     }
 //   ];
 // };
+
+export const links: LinksFunction = () => [
+  { href: "/fonts/poppins/font.css", rel: "stylesheet" },
+  { href: styles, rel: "stylesheet" }
+];
 
 interface DocumentProps {
   children: React.ReactNode;
@@ -52,18 +58,18 @@ const Document = withEmotionCache(
       });
       // reset cache to reapply global styles
       clientStyleData?.reset();
-    }, []);
+    }, [clientStyleData, emotionCache.sheet]);
 
     return (
       <html lang="en">
         <head>
           <Meta />
           <Links />
-          {serverStyleData?.map(({ key, ids, css }) => (
+          {serverStyleData?.map(({ css, ids, key }) => (
             <style
-              key={key}
-              data-emotion={`${key} ${ids.join(" ")}`}
               dangerouslySetInnerHTML={{ __html: css }}
+              data-emotion={`${key} ${ids.join(" ")}`}
+              key={key}
             />
           ))}
         </head>

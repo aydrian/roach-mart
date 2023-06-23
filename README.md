@@ -61,3 +61,8 @@ vercel
 ```
 
 It is generally recommended to use a Git repository, because future commits will then automatically be deployed by Vercel, through its [Git Integration](https://vercel.com/docs/concepts/git).
+
+## 📝 License
+
+Copyright © 2023 [Cockroach Labs](https://cockroachlabs.com). <br />
+This project is [MIT](./LICENSE) licensed.
