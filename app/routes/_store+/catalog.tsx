@@ -43,19 +43,7 @@ export const action: ActionFunction = async ({ request }) => {
 
   if (intent === "addToCart") {
     const productId = form.get("id");
-    const productName = form.get("name");
-    const productPrice = form.get("price");
-    const productImgUrl = form.get("imgUrl");
     invariant(typeof productId === "string", `productId must be a string`);
-    invariant(typeof productName === "string", `productName must be a string`);
-    invariant(
-      typeof productPrice === "string",
-      `productPrice must be a string`
-    );
-    invariant(
-      typeof productImgUrl === "string",
-      `productImgUrl must be a string`
-    );
 
     await prisma.cartItem.create({
       data: { productId, userId }

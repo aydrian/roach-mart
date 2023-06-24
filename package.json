@@ -22,10 +22,6 @@
     "seed": "node prisma/seed.js"
   },
   "dependencies": {
-    "@chakra-ui/react": "^2.2.1",
-    "@emotion/react": "^11.9.3",
-    "@emotion/server": "^11.4.0",
-    "@emotion/styled": "^11.9.3",
     "@prisma/client": "^4.16.1",
     "@radix-ui/react-avatar": "^1.0.3",
     "@radix-ui/react-slot": "^1.0.2",
@@ -36,7 +32,7 @@
     "bcryptjs": "^2.4.3",
     "class-variance-authority": "^0.6.0",
     "clsx": "^1.2.1",
-    "framer-motion": "^10.12.17",
+    "isbot": "^3.6.12",
     "lucide-react": "^0.252.0",
     "react": "18.2",
     "react-dom": "18.2",
@@ -51,7 +47,7 @@
     "@remix-run/eslint-config": "^1.6.3",
     "@remix-run/serve": "^1.6.3",
     "@types/bcryptjs": "^2.4.2",
-    "@types/react": "^18.0.14",
+    "@types/react": "^18.2.14",
     "@types/react-dom": "^18.0.5",
     "autoprefixer": "^10.4.14",
     "esbuild": "^0.17.19",
