@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 
 export function CountdownTimer({ targetDate }: { targetDate: Date }) {
-  console.log(targetDate);
   const countDownDate = new Date(targetDate).getTime();
 
   const [countDown, setCountDown] = useState(
@@ -23,7 +22,9 @@ export function CountdownTimer({ targetDate }: { targetDate: Date }) {
   } else {
     return (
       <span>
-        {days}:{hours}:{minutes}:{seconds}
+        {days}:{hours.toString().padStart(2, "0")}:
+        {minutes.toString().padStart(2, "0")}:
+        {seconds.toString().padStart(2, "0")}
       </span>
     );
   }

@@ -1,56 +1,23 @@
-import type {
-  ActionFunction,
-  DataFunctionArgs,
-  V2_MetaFunction
-} from "@remix-run/node";
+import type { DataFunctionArgs, V2_MetaFunction } from "@remix-run/node";
 
-import {
-  Heading,
-  IconButton,
-  Image,
-  Table,
-  TableContainer,
-  Tbody,
-  Td,
-  Tfoot,
-  Th,
-  Tr,
-  VStack
-} from "@chakra-ui/react";
 import { Prisma } from "@prisma/client";
 import { Response } from "@remix-run/node";
 import { Form } from "@remix-run/react";
-import { BsTrash } from "react-icons/bs";
 import { typedjson, useTypedLoaderData } from "remix-typedjson";
 import invariant from "tiny-invariant";
 
 import { CountdownTimer } from "~/components/countdown-timer";
+import { Trash } from "~/components/icons";
+import { Button } from "~/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableFooter,
+  TableRow
+} from "~/components/ui/table";
 import { requireUserId } from "~/utils/auth.server";
 import { prisma } from "~/utils/db.server";
-
-// type CartItemWithProduct = Prisma.CartItemGetPayload<{
-//   select: {
-//     id: true;
-//     product: {
-//       select: {
-//         id: true;
-//         name: true;
-//         price: true;
-//         imgUrl: true;
-//       };
-//     };
-//   };
-// }>;
-
-// type GroupedProduct = Prisma.ProductGetPayload<{
-//   select: {
-//     id: true;
-//     name: true;
-//     price: true;
-//     imgUrl: true;
-//     _count: true;
-//   };
-// }>;
 
 export const meta: V2_MetaFunction = () => {
   return [{ title: "Roach Mart: Cart" }];
@@ -72,34 +39,16 @@ export const loader = async ({ request }: DataFunctionArgs) => {
     where: { expiration: { gt: new Date() }, userId }
   });
 
-  // const groupedItems = await prisma.cartItem.groupBy({
-  //   by: ["productId"],
-  //   _count: {
-  //     productId: true
-  //   }
-  // });
-  // console.log(groupedItems);
-
-  // const groupedItems = await prisma.product.groupBy({
-  //   by: ["id", "name", "price", "imgUrl"],
-  //   where: {
-  //     CartItem: { some: { userId } }
-  //   },
-  //   _count: { _all: true },
-  //   _sum: { price: true }
-  // });
-  // console.log(groupedItems);
-
   const total = items.reduce(
-    (partialTotal, a) => Prisma.Decimal.add(partialTotal, a.product.price),
-    new Prisma.Decimal(0)
+    (partialTotal, a) =>
+      Prisma.Decimal.add(partialTotal, a.product.price).toNumber(),
+    0
   );
 
-  // return { items, groupedItems, total };
-  return typedjson({ items, total: total.toNumber() });
+  return typedjson({ items, total: total });
 };
 
-export const action: ActionFunction = async ({ request }) => {
+export const action = async ({ request }: DataFunctionArgs) => {
   const form = await request.formData();
 
   const intent = await form.get("intent");
@@ -112,93 +61,79 @@ export const action: ActionFunction = async ({ request }) => {
 
     return new Response(null, { status: 204 });
   }
-  // } else if (intent == "deleteOldest") {
-  //   const userId = await requireUserId(request);
-  //   const productId = form.get("productId");
-  //   invariant(typeof productId === "string", `productId must be a string`);
-
-  //   const item = await prisma.cartItem.findFirst({
-  //     select: { id: true },
-  //     where: {
-  //       userId,
-  //       productId
-  //     },
-  //     orderBy: { createdAt: "asc" }
-  //   });
-  //   invariant(typeof item.id === "string", `cartItem.id must be a string`);
-
-  //   await prisma.cartItem.delete({ where: { id: item.id } });
-  //   return new Response(null, { status: 204 });
-  // }
 
   return { message: "ok" };
 };
 
 export default function Cart() {
-  //const { items, groupedItems, total } = useLoaderData();
   const { items, total } = useTypedLoaderData<typeof loader>();
   const numFormat = new Intl.NumberFormat("en-US", {
     currency: "USD",
     style: "currency"
   });
   return (
-    <VStack spacing="2" textAlign="center">
-      <Heading as="h1">Cart</Heading>
-      <TableContainer>
-        <Table minWidth="75%" size="sm" variant="simple">
-          <Tbody>
+    <>
+      <div className="bg-crl-deep-purple">
+        <div className="container mx-auto max-w-4xl py-8">
+          <h1 className="text-center font-poppins text-4xl font-semibold leading-tight text-white">
+            Shopping Cart
+          </h1>
+        </div>
+      </div>
+      <div className="container">
+        <Table className="mx-auto my-10 max-w-4xl border-separate border-spacing-x-0 border-spacing-y-8">
+          <TableBody>
             {items.map((item) => (
-              // groupedItems.map((item: GroupedProduct) => (
-              <Tr key={item.id}>
-                <Td>
-                  <Image
-                    height={50}
-                    objectFit={"cover"}
-                    rounded={"lg"}
+              <TableRow className="p-2" key={item.id}>
+                <TableCell className="p-2">
+                  <img
+                    alt={item.product.name}
+                    className="h-24 w-auto rounded-sm"
                     src={item.product.imgUrl}
-                    width={50}
                   />
-                </Td>
-                <Td>{item.product.name}</Td>
-                {/* <Td>{item._count._all}</Td> */}
-                <Td>
-                  {numFormat.format(Number(item.product.price.toString()))}
-                </Td>
-                <Td>
+                </TableCell>
+                <TableCell className="p-2 font-medium">
+                  <div>{item.product.name}</div>
+                  <div className="text-sm text-crl-electric-purple">
+                    {numFormat.format(Number(item.product.price.toString()))}
+                  </div>
+                </TableCell>
+                <TableCell className="border-x p-2 text-center text-sm text-[#959ead]">
                   Expires in{" "}
                   <CountdownTimer targetDate={item.expiration || new Date()} />
-                </Td>
-                <Td>
-                  <Form method="post" replace>
+                </TableCell>
+                <TableCell className="p-2">
+                  <Form className="flex justify-center" method="post" replace>
                     <input name="id" type="hidden" value={item.id} />
-                    <input
-                      name="productId"
-                      type="hidden"
-                      value={item.productId}
-                    />
-                    <IconButton
+                    <Button
                       aria-label="Delete Item"
-                      icon={<BsTrash />}
+                      className="bg-[#d9d9d9] p-1"
                       name="intent"
                       size="sm"
                       type="submit"
                       value="deleteItem"
-                    />
+                      variant="secondary"
+                    >
+                      <Trash className="h-6 w-auto" />
+                      <span className="sr-only">Delete</span>
+                    </Button>
                   </Form>
-                </Td>
-              </Tr>
+                </TableCell>
+              </TableRow>
             ))}
-          </Tbody>
-          <Tfoot>
-            <Th>{}</Th>
-            {/* <Th>{}</Th> */}
-            <Th>Total</Th>
-            <Th>{numFormat.format(total)}</Th>
-            <Th>{}</Th>
-            <Th>{}</Th>
-          </Tfoot>
+          </TableBody>
+          <TableFooter className="bg-transparent">
+            <TableRow className="border-t">
+              <TableCell className="text-black">Total</TableCell>
+              <TableCell />
+              <TableCell />
+              <TableCell className="text-right text-crl-electric-purple">
+                {numFormat.format(total)}
+              </TableCell>
+            </TableRow>
+          </TableFooter>
         </Table>
-      </TableContainer>
-    </VStack>
+      </div>
+    </>
   );
 }
