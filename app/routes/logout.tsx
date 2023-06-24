@@ -1,11 +1,7 @@
-import type { DataFunctionArgs,  } from "@remix-run/node";
+import type { LoaderArgs } from "@remix-run/node";
 
-import { logout } from "~/utils/session.server";
+import { authenticator } from "~/utils/auth.server";
 
-export const action = async ({ request }: DataFunctionArgs) => {
-  return logout(request);
-};
-
-export const loader = async ({request}: DataFunctionArgs) => {
-  return logout(request);
+export const loader = async ({ request }: LoaderArgs) => {
+  await authenticator.logout(request, { redirectTo: `/` });
 };

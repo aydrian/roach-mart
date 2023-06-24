@@ -1,20 +1,20 @@
-import { type DataFunctionArgs, Response } from "@remix-run/node";
+import { type DataFunctionArgs } from "@remix-run/node";
 import { Link, Outlet, useLoaderData } from "@remix-run/react";
 
 import { Cart, Line } from "~/components/icons";
 import icon from "~/images/icon.png";
 import logo from "~/images/logo.png";
+import { requireUserId } from "~/utils/auth.server";
 import { prisma } from "~/utils/db.server";
-import { getUser, requireUserId } from "~/utils/session.server";
 
 export const loader = async ({ request }: DataFunctionArgs) => {
-  await requireUserId(request);
-  const user = await getUser(request);
-  if (!user) {
-    throw new Response("User not found", { status: 404 });
-  }
+  const userId = await requireUserId(request);
+  const user = await prisma.user.findUniqueOrThrow({
+    select: { id: true, username: true },
+    where: { id: userId }
+  });
   const cartItemCount = await prisma.cartItem.count({
-    where: { expiration: { gt: new Date() }, userId: user?.id }
+    where: { expiration: { gt: new Date() }, userId }
   });
 
   return { cartItemCount, user };

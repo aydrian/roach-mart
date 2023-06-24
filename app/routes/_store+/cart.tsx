@@ -25,8 +25,8 @@ import { typedjson, useTypedLoaderData } from "remix-typedjson";
 import invariant from "tiny-invariant";
 
 import { CountdownTimer } from "~/components/countdown-timer";
+import { requireUserId } from "~/utils/auth.server";
 import { prisma } from "~/utils/db.server";
-import { requireUserId } from "~/utils/session.server";
 
 // type CartItemWithProduct = Prisma.CartItemGetPayload<{
 //   select: {

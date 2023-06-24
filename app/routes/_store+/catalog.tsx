@@ -10,8 +10,8 @@ import { typedjson, useTypedLoaderData } from "remix-typedjson";
 import invariant from "tiny-invariant";
 
 import { ProductCard } from "~/components/product-card";
+import { requireUserId } from "~/utils/auth.server";
 import { prisma } from "~/utils/db.server";
-import { requireUserId } from "~/utils/session.server";
 
 export const meta: V2_MetaFunction = () => {
   return [{ title: "Roach Mart: Catalog" }];
@@ -66,7 +66,7 @@ export default function Catalog() {
         </div>
       </div>
       <div className="container">
-        <h2 className="my-12 text-center font-poppins text-4xl font-semibold text-crl-deep-purple">
+        <h2 className="mt-10 text-center font-poppins text-4xl font-semibold text-crl-deep-purple">
           Products
         </h2>
         <div className="flex w-full flex-col justify-center gap-8 py-10 text-center md:flex-row">

@@ -11,7 +11,7 @@ export function ProductCard({ product }: { product: Product }) {
   return (
     <Card>
       <CardHeader>
-        <Badge>Sale</Badge>
+        <Badge className="max-w-min">Sale</Badge>
       </CardHeader>
       <CardContent>
         <img
@@ -29,7 +29,7 @@ export function ProductCard({ product }: { product: Product }) {
         </div>
       </CardContent>
       <CardFooter>
-        <Form method="POST" replace>
+        <Form className="flex w-full justify-stretch" method="POST" replace>
           <input name="id" type="hidden" value={product.id} />
           <Button
             className="flex w-full items-center justify-center gap-2 bg-crl-dark-blue text-white"
