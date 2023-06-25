@@ -6,7 +6,7 @@ import type {
 } from "@remix-run/node";
 
 import { json } from "@remix-run/node";
-import { typedjson, useTypedLoaderData } from "remix-typedjson";
+import { useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
 
 import { ProductCard } from "~/components/product-card";
@@ -32,7 +32,7 @@ export const loader: LoaderFunction = async () => {
     }
   });
 
-  return typedjson({ products });
+  return json({ products });
 };
 
 export const action: ActionFunction = async ({ request }) => {
@@ -55,7 +55,7 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function Catalog() {
-  const { products } = useTypedLoaderData<typeof loader>();
+  const { products } = useLoaderData<typeof loader>();
   return (
     <>
       <div className=" bg-crl-deep-purple">

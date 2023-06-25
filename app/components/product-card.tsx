@@ -1,13 +1,14 @@
 import type { Product } from "@prisma/client";
 
-import { Form } from "@remix-run/react";
+import { useFetcher } from "@remix-run/react";
 
+import { SubmitButton } from "./form";
 import { Cart } from "./icons";
 import { Badge } from "./ui/badge";
-import { Button } from "./ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "./ui/card";
 
 export function ProductCard({ product }: { product: Product }) {
+  const addToCartFetcher = useFetcher();
   return (
     <Card>
       <CardHeader>
@@ -33,17 +34,23 @@ export function ProductCard({ product }: { product: Product }) {
         </div>
       </CardContent>
       <CardFooter>
-        <Form className="flex w-full justify-stretch" method="POST" replace>
+        <addToCartFetcher.Form
+          className="flex w-full justify-stretch"
+          method="POST"
+          replace
+        >
           <input name="id" type="hidden" value={product.id} />
-          <Button
+          <SubmitButton
             className="flex w-full items-center justify-center gap-2 bg-crl-dark-blue text-white"
             name="intent"
+            state={addToCartFetcher.state}
+            submittingText="Adding to Cart"
             type="submit"
             value="addToCart"
           >
             <Cart className="inline-block h-6 w-auto" /> Add to Cart
-          </Button>
-        </Form>
+          </SubmitButton>
+        </addToCartFetcher.Form>
       </CardFooter>
     </Card>
   );

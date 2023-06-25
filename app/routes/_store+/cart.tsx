@@ -1,9 +1,8 @@
 import type { DataFunctionArgs, V2_MetaFunction } from "@remix-run/node";
 
 import { Prisma } from "@prisma/client";
-import { Response } from "@remix-run/node";
-import { Form, Link, useRevalidator } from "@remix-run/react";
-import { typedjson, useTypedLoaderData } from "remix-typedjson";
+import { Response, json } from "@remix-run/node";
+import { Form, Link, useLoaderData, useRevalidator } from "@remix-run/react";
 import invariant from "tiny-invariant";
 
 import { CountdownTimer } from "~/components/countdown-timer";
@@ -45,7 +44,7 @@ export const loader = async ({ request }: DataFunctionArgs) => {
     0
   );
 
-  return typedjson({ items, total: total });
+  return json({ items, total: total });
 };
 
 export const action = async ({ request }: DataFunctionArgs) => {
@@ -62,12 +61,12 @@ export const action = async ({ request }: DataFunctionArgs) => {
     return new Response(null, { status: 204 });
   }
 
-  return { message: "ok" };
+  return json({ message: "ok" });
 };
 
 export default function ShoppingCart() {
   const revalidator = useRevalidator();
-  const { items, total } = useTypedLoaderData<typeof loader>();
+  const { items, total } = useLoaderData<typeof loader>();
   const numFormat = new Intl.NumberFormat("en-US", {
     currency: "USD",
     style: "currency"
@@ -106,7 +105,9 @@ export default function ShoppingCart() {
                       onExpired={() => {
                         revalidator.revalidate();
                       }}
-                      targetDate={item.expiration || new Date()}
+                      targetDate={
+                        item.expiration ? new Date(item.expiration) : new Date()
+                      }
                     />
                   </TableCell>
                   <TableCell className="p-2">
