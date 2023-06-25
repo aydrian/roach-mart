@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 
-type CountdownTimerProps = {
+export function CountdownTimer({
+  onExpired,
+  targetDate
+}: {
+  onExpired?: Function;
   targetDate: Date;
-};
-
-export function CountdownTimer({ targetDate }: CountdownTimerProps) {
-  console.log(targetDate);
+}) {
   const countDownDate = new Date(targetDate).getTime();
 
   const [countDown, setCountDown] = useState(
@@ -23,11 +24,17 @@ export function CountdownTimer({ targetDate }: CountdownTimerProps) {
   const [days, hours, minutes, seconds] = getReturnValues(countDown);
 
   if (days + hours + minutes + seconds <= 0) {
+    if (onExpired) {
+      onExpired();
+      return;
+    }
     return <span>expired</span>;
   } else {
     return (
       <span>
-        {days}:{hours}:{minutes}:{seconds}
+        {days}:{hours.toString().padStart(2, "0")}:
+        {minutes.toString().padStart(2, "0")}:
+        {seconds.toString().padStart(2, "0")}
       </span>
     );
   }

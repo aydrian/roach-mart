@@ -1,103 +1,57 @@
 import type { Product } from "@prisma/client";
-import { Form } from "@remix-run/react";
-import {
-  Box,
-  Button,
-  useColorModeValue,
-  Heading,
-  Text,
-  Stack,
-  Image
-} from "@chakra-ui/react";
-import { BsCart4 } from "react-icons/bs";
 
-type ProductCardProps = {
-  product: Product;
-};
+import { useFetcher } from "@remix-run/react";
 
-export function ProductCard({ product }: ProductCardProps) {
+import { SubmitButton } from "./form";
+import { Cart } from "./icons";
+import { Badge } from "./ui/badge";
+import { Card, CardContent, CardFooter, CardHeader } from "./ui/card";
+
+export function ProductCard({ product }: { product: Product }) {
+  const addToCartFetcher = useFetcher();
   return (
-    <Form method="post" replace>
-      <Box
-        role={"group"}
-        p={6}
-        maxW={"278px"}
-        w={"full"}
-        bg={useColorModeValue("white", "gray.800")}
-        boxShadow={"2xl"}
-        rounded={"lg"}
-        pos={"relative"}
-        zIndex={1}
-      >
-        <Box
-          rounded={"lg"}
-          mt={-12}
-          pos={"relative"}
-          height={"230px"}
-          _after={{
-            transition: "all .3s ease",
-            content: '""',
-            w: "full",
-            h: "full",
-            pos: "absolute",
-            top: 5,
-            left: 0,
-            backgroundImage: `url(${product.imgUrl})`,
-            filter: "blur(15px)",
-            zIndex: -1
-          }}
-          _groupHover={{
-            _after: {
-              filter: "blur(20px)"
-            }
-          }}
-        >
-          <Image
-            rounded={"lg"}
-            height={230}
-            width={230}
-            objectFit={"cover"}
+    <Card>
+      <CardHeader>
+        <Badge className="max-w-min bg-[#de3618] bg-opacity-10 text-[#de3618]">
+          Sale
+        </Badge>
+      </CardHeader>
+      <CardContent>
+        <div className="flex flex-col gap-2.5 text-left">
+          <img
+            alt={product.name}
+            className="h-56 w-56 rounded-lg object-cover"
             src={product.imgUrl}
           />
-        </Box>
-        <Stack pt={10} align={"center"}>
-          <Heading fontSize={"2xl"} fontFamily={"body"} fontWeight={500}>
-            {product.name}
-          </Heading>
-          <Text color={"gray.500"} fontSize={"sm"}>
-            {product.description}
-          </Text>
-          <Stack direction={"row"} align={"center"}>
-            <Text fontWeight={800} fontSize={"xl"}>
-              {new Intl.NumberFormat("en-US", {
-                style: "currency",
-                currency: "USD"
-              }).format(Number(product.price.toString()))}
-            </Text>
-          </Stack>
-        </Stack>
-        <input type="hidden" name="id" value={product.id} />
-        <input type="hidden" name="name" value={product.name} />
-        <input type="hidden" name="price" value={product.price.toString()} />
-        <input type="hidden" name="imgUrl" value={product.imgUrl} />
-        <Button
-          type="submit"
-          name="intent"
-          value="addToCart"
-          leftIcon={<BsCart4 />}
-          w={"full"}
-          mt={8}
-          bg={useColorModeValue("#0037A5", "gray.900")}
-          color={"white"}
-          rounded={"md"}
-          _hover={{
-            transform: "translateY(-2px)",
-            boxShadow: "lg"
-          }}
+          <div className="font-medium">{product.name}</div>
+          <div className="text-sm">{product.description}</div>
+          <div className="text-sm font-medium text-crl-electric-purple">
+            {new Intl.NumberFormat("en-US", {
+              currency: "USD",
+              style: "currency"
+            }).format(Number(product.price))}
+          </div>
+        </div>
+      </CardContent>
+      <CardFooter>
+        <addToCartFetcher.Form
+          className="flex w-full justify-stretch"
+          method="POST"
+          replace
         >
-          Add to Cart
-        </Button>
-      </Box>
-    </Form>
+          <input name="id" type="hidden" value={product.id} />
+          <SubmitButton
+            className="flex w-full items-center justify-center gap-2 bg-crl-dark-blue text-white"
+            name="intent"
+            state={addToCartFetcher.state}
+            submittingText="Adding to Cart"
+            type="submit"
+            value="addToCart"
+          >
+            <Cart className="inline-block h-6 w-auto" /> Add to Cart
+          </SubmitButton>
+        </addToCartFetcher.Form>
+      </CardFooter>
+    </Card>
   );
 }

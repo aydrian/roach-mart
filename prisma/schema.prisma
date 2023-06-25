@@ -2,43 +2,58 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator erd {
+  provider = "prisma-erd-generator"
+  output   = "../erd.md"
+}
+
 datasource db {
   provider = "cockroachdb"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id           String    @id(map: "primary") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  createdAt    DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt    DateTime? @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
-  username     String    @unique
-  passwordHash String    @map("password_hash")
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime   @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  username  String     @unique
+  password  Password?
+  cartItems CartItem[]
 
   @@map("users")
 }
 
+model Password {
+  hash String
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String @unique @map("user_id") @db.Uuid
+
+  @@map("passwords")
+}
+
 model Product {
-  id          String    @id(map: "primary") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  createdAt   DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt   DateTime? @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt   DateTime?  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime?  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
   name        String
   description String
   price       Decimal
-  units       Int       @default(0)
-  imgUrl      String    @map("img_url")
+  units       Int        @default(0)
+  imgUrl      String     @map("img_url")
+  inCarts     CartItem[]
 
   @@map("products")
 }
 
 model CartItem {
-  id            String    @id(map: "primary") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  productId     String    @map("product_id") @db.Uuid
-  userId        String    @map("user_id") @db.Uuid
-  createdAt     DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
-  productImgUrl String    @map("product_img_url")
-  productName   String    @map("product_name")
-  productPrice  Decimal   @map("product_price")
-  expiration    DateTime? @map("crdb_internal_expiration") @db.Timestamptz
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  productId  String    @map("product_id") @db.Uuid
+  userId     String    @map("user_id") @db.Uuid
+  createdAt  DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  expiration DateTime? @map("crdb_internal_expiration") @db.Timestamptz
+  product    Product   @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@map("cart_items")
 }
