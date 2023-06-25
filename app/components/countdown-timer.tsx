@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
 
-export function CountdownTimer({ targetDate }: { targetDate: Date }) {
+export function CountdownTimer({
+  onExpired,
+  targetDate
+}: {
+  onExpired?: Function;
+  targetDate: Date;
+}) {
   const countDownDate = new Date(targetDate).getTime();
 
   const [countDown, setCountDown] = useState(
@@ -18,6 +24,10 @@ export function CountdownTimer({ targetDate }: { targetDate: Date }) {
   const [days, hours, minutes, seconds] = getReturnValues(countDown);
 
   if (days + hours + minutes + seconds <= 0) {
+    if (onExpired) {
+      onExpired();
+      return;
+    }
     return <span>expired</span>;
   } else {
     return (

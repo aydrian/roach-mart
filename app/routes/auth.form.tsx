@@ -1,7 +1,7 @@
 import { conform, useForm } from "@conform-to/react";
 import { getFieldsetConstraint, parse } from "@conform-to/zod";
 import { type DataFunctionArgs, json } from "@remix-run/node";
-import { useFetcher } from "@remix-run/react";
+import { Link, useFetcher } from "@remix-run/react";
 import { AuthorizationError } from "remix-auth";
 import { FormStrategy } from "remix-auth-form";
 import { z } from "zod";
@@ -82,23 +82,29 @@ export function FormLoginForm({ formError }: { formError?: null | string }) {
     >
       <Field
         errors={fields.username.errors}
-        inputProps={{ ...conform.input(fields.username) }}
+        inputProps={conform.input(fields.username)}
         labelProps={{ children: "Username", htmlFor: fields.username.id }}
       />
       <Field
         errors={fields.password.errors}
-        inputProps={{ ...conform.input(fields.password), type: "password" }}
+        inputProps={conform.input(fields.password, { type: "password" })}
         labelProps={{ children: "Password", htmlFor: fields.password.id }}
       />
       <ErrorList errors={formError ? [formError] : []} />
       <ErrorList errors={form.errors} id={form.errorId} />
       <SubmitButton
-        className="mt-4 bg-crl-dark-blue px-6 py-2"
+        className="bg-crl-dark-blue px-6 py-2"
         state={loginFetcher.state}
         type="submit"
       >
         Login
       </SubmitButton>
+      <div className="mt-2 text-center text-sm text-gray-500">
+        Don't have an account?{" "}
+        <Link className="text-crl-electric-purple underline" to="/signup">
+          Sign up
+        </Link>
+      </div>
     </loginFetcher.Form>
   );
 }

@@ -11,21 +11,25 @@ export function ProductCard({ product }: { product: Product }) {
   return (
     <Card>
       <CardHeader>
-        <Badge className="max-w-min">Sale</Badge>
+        <Badge className="max-w-min bg-[#de3618] bg-opacity-10 text-[#de3618]">
+          Sale
+        </Badge>
       </CardHeader>
       <CardContent>
-        <img
-          alt={product.name}
-          className="h-56 w-56 rounded-lg object-cover"
-          src={product.imgUrl}
-        />
-        <div>{product.name}</div>
-        <div>{product.description}</div>
-        <div>
-          {new Intl.NumberFormat("en-US", {
-            currency: "USD",
-            style: "currency"
-          }).format(Number(product.price.toString()))}
+        <div className="flex flex-col gap-2.5 text-left">
+          <img
+            alt={product.name}
+            className="h-56 w-56 rounded-lg object-cover"
+            src={product.imgUrl}
+          />
+          <div className="font-medium">{product.name}</div>
+          <div className="text-sm">{product.description}</div>
+          <div className="text-sm font-medium text-crl-electric-purple">
+            {new Intl.NumberFormat("en-US", {
+              currency: "USD",
+              style: "currency"
+            }).format(Number(product.price))}
+          </div>
         </div>
       </CardContent>
       <CardFooter>

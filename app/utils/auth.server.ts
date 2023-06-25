@@ -63,3 +63,17 @@ export async function verifyLogin(
 
   return { id: userWithPassword.id };
 }
+
+export async function signUp(username: User["username"], password: string) {
+  const passwordHash = await bcrypt.hash(password, 10);
+
+  const user = await prisma.user.create({
+    data: {
+      passwordHash,
+      username
+    },
+    select: { id: true }
+  });
+
+  return { id: user.id };
+}
