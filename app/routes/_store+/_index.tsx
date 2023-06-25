@@ -14,7 +14,7 @@ import { requireUserId } from "~/utils/auth.server";
 import { prisma } from "~/utils/db.server";
 
 export const meta: V2_MetaFunction = () => {
-  return [{ title: "Roach Mart: Catalog" }];
+  return [{ title: "Roach Mart: Product Catalog" }];
 };
 
 export const loader: LoaderFunction = async () => {
@@ -58,16 +58,16 @@ export default function Catalog() {
   const { products } = useLoaderData<typeof loader>();
   return (
     <>
-      <div className=" bg-crl-deep-purple">
-        <div className="container mx-auto max-w-4xl py-12">
-          <h1 className="bg-gradient-to-r from-crl-iridescent-blue via-crl-electric-purple to-crl-iridescent-blue bg-clip-text text-center font-poppins text-6xl font-semibold leading-tight text-transparent">
+      <div className="bg-gradient-to-br from-crl-deep-purple from-45% via-crl-dark-blue to-crl-electric-purple">
+        <div className="container mx-auto py-12 md:max-w-4xl">
+          <h1 className="bg-gradient-to-r from-crl-iridescent-blue via-crl-electric-purple to-crl-iridescent-blue bg-clip-text text-center font-poppins text-3xl font-semibold leading-tight text-transparent md:text-6xl">
             Shop fast, find anything, thrive everywhere
           </h1>
         </div>
       </div>
-      <div className="container">
-        <h2 className="mt-10 text-center font-poppins text-4xl font-semibold text-crl-deep-purple">
-          Products
+      <div className="container bg-[url('/images/bg-texture.svg')] bg-auto bg-left-top bg-no-repeat pt-10">
+        <h2 className="text-center font-poppins text-2xl font-semibold text-crl-deep-purple md:text-4xl">
+          Latest Products
         </h2>
         <div className="flex w-full flex-col justify-center gap-8 py-10 text-center md:flex-row">
           {products.map((product: Product) => {

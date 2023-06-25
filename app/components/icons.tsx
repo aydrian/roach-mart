@@ -45,3 +45,21 @@ export function Trash({ className }: { className?: string }) {
     </svg>
   );
 }
+
+export function User({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        clipRule="evenodd"
+        d="M12 11.5199C9.61418 11.5199 7.68005 9.58575 7.68005 7.19988C7.68005 4.81401 9.61418 2.87988 12 2.87988C14.3859 2.87988 16.32 4.81401 16.32 7.19988C16.32 9.58575 14.3859 11.5199 12 11.5199ZM12 12.4799C15.9765 12.4799 19.2 15.7034 19.2 19.6799V21.5999C19.2 21.865 18.9851 22.0799 18.72 22.0799H5.28005C5.01495 22.0799 4.80005 21.865 4.80005 21.5999V19.6799C4.80005 15.7034 8.0236 12.4799 12 12.4799Z"
+        fill="currentColor"
+        fillRule="evenodd"
+      />
+    </svg>
+  );
+}

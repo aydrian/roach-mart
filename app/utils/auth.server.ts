@@ -1,4 +1,6 @@
-import { type User } from "@prisma/client";
+import type { Prisma, User } from "@prisma/client";
+import type { DefaultArgs } from "@prisma/client/runtime";
+
 import bcrypt from "bcryptjs";
 import { Authenticator, AuthorizationError } from "remix-auth";
 import { FormStrategy } from "remix-auth-form";
@@ -37,9 +39,21 @@ export const requireUserId = async (
     ["loginMessage", "Please login to continue"]
   ]);
   const userId = await authenticator.isAuthenticated(request, {
-    failureRedirect: `/admin?${searchParams}`
+    failureRedirect: `/login?${searchParams}`
   });
   return userId;
+};
+
+export const getUser = async (
+  request: Request,
+  select?: Prisma.UserSelect<DefaultArgs>
+) => {
+  const userId = await authenticator.isAuthenticated(request);
+  if (!userId) return null;
+  if (select) {
+    return await prisma.user.findUnique({ select, where: { id: userId } });
+  }
+  return { id: userId };
 };
 
 export async function verifyLogin(

@@ -67,7 +67,7 @@ export const action = async ({ request }: DataFunctionArgs) => {
   // Sign in
   await authenticator.authenticate(FormStrategy.name, request, {
     context: { formData },
-    failureRedirect: "/",
+    failureRedirect: "/login",
     successRedirect: redirectTo
   });
 
@@ -76,7 +76,7 @@ export const action = async ({ request }: DataFunctionArgs) => {
 
 export const loader = async ({ request }: DataFunctionArgs) => {
   return await authenticator.isAuthenticated(request, {
-    successRedirect: "/admin/dashboard"
+    successRedirect: "/"
   });
 };
 
@@ -94,7 +94,7 @@ export default function SignUp() {
   });
 
   return (
-    <Card>
+    <Card className="w-3/4">
       <CardHeader>
         <CardTitle className="text-crl-deep-purple">Sign up</CardTitle>
       </CardHeader>
@@ -134,7 +134,7 @@ export default function SignUp() {
           </SubmitButton>
           <div className="mt-2 text-center text-sm text-gray-500">
             Already have an account?{" "}
-            <Link className="text-crl-electric-purple" to="/">
+            <Link className="text-crl-electric-purple" to="/login">
               Log in
             </Link>
           </div>

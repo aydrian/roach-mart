@@ -2,7 +2,7 @@ import type { DataFunctionArgs, V2_MetaFunction } from "@remix-run/node";
 
 import { Prisma } from "@prisma/client";
 import { Response, json } from "@remix-run/node";
-import { Form, Link, useLoaderData, useRevalidator } from "@remix-run/react";
+import { Form, Link, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
 
 import { CountdownTimer } from "~/components/countdown-timer";
@@ -65,7 +65,6 @@ export const action = async ({ request }: DataFunctionArgs) => {
 };
 
 export default function ShoppingCart() {
-  const revalidator = useRevalidator();
   const { items, total } = useLoaderData<typeof loader>();
   const numFormat = new Intl.NumberFormat("en-US", {
     currency: "USD",
@@ -73,16 +72,16 @@ export default function ShoppingCart() {
   });
   return (
     <>
-      <div className="bg-crl-deep-purple">
+      <div className="bg-gradient-to-br from-crl-deep-purple from-45% via-crl-dark-blue to-crl-electric-purple">
         <div className="container mx-auto max-w-4xl py-8">
           <h1 className="text-center font-poppins text-4xl font-semibold leading-tight text-white">
             Shopping Cart
           </h1>
         </div>
       </div>
-      <div className="container h-full w-full">
+      <div className="container h-full w-full bg-[url('/images/bg-texture.svg')] bg-auto bg-left-top bg-no-repeat pt-10">
         {items.length > 0 ? (
-          <Table className="mx-auto my-10 max-w-4xl border-separate border-spacing-x-0 border-spacing-y-8">
+          <Table className="mx-auto mb-10 max-w-4xl border-separate border-spacing-x-0 border-spacing-y-8">
             <TableBody>
               {items.map((item) => (
                 <TableRow className="p-2" key={item.id}>
@@ -102,9 +101,6 @@ export default function ShoppingCart() {
                   <TableCell className="border-x p-2 text-center text-sm text-[#959ead]">
                     Expires in{" "}
                     <CountdownTimer
-                      onExpired={() => {
-                        revalidator.revalidate();
-                      }}
                       targetDate={
                         item.expiration ? new Date(item.expiration) : new Date()
                       }
@@ -142,15 +138,12 @@ export default function ShoppingCart() {
             </TableFooter>
           </Table>
         ) : (
-          <div className="mt-10 flex h-full w-full flex-col items-center gap-1.5">
+          <div className="flex h-full w-full flex-col items-center gap-1.5">
             <Cart className="h-16 w-auto text-[#637381]" />
             <h2 className="text-center font-poppins text-2xl font-semibold text-crl-deep-purple">
               Your cart is empty.
             </h2>
-            <Link
-              className="font-medium text-crl-electric-purple"
-              to="/catalog"
-            >
+            <Link className="font-medium text-crl-electric-purple" to="/">
               Keep Shopping
             </Link>
           </div>

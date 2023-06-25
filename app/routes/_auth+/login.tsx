@@ -2,16 +2,15 @@ import { type DataFunctionArgs, json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
-import logo from "~/images/logo.png";
 import { authenticator } from "~/utils/auth.server";
 import { redirectToCookie } from "~/utils/cookies.server";
 import { commitSession, getSession } from "~/utils/session.server";
 
-import { FormLoginForm } from "./auth.form";
+import { FormLoginForm } from "../auth.form";
 
 export const loader = async ({ request }: DataFunctionArgs) => {
   await authenticator.isAuthenticated(request, {
-    successRedirect: "/admin/dashboard"
+    successRedirect: "/"
   });
   const url = new URL(request.url);
   const redirectTo = url.searchParams.get("redirectTo");
@@ -32,22 +31,19 @@ export const loader = async ({ request }: DataFunctionArgs) => {
   return json({ formError: errorMessage, loginMessage }, { headers });
 };
 
-export default function Index() {
+export default function Login() {
   const data = useLoaderData<typeof loader>();
   return (
-    <main className="container flex min-h-screen flex-col items-center justify-center gap-8">
-      <img alt="Roacher Mart" className="h-24 w-auto" src={logo} />
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-crl-deep-purple">Login</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {data.loginMessage ? (
-            <div className="text-sm text-red-500">{data.loginMessage}</div>
-          ) : null}
-          <FormLoginForm formError={data.formError} />
-        </CardContent>
-      </Card>
-    </main>
+    <Card className="w-3/4">
+      <CardHeader>
+        <CardTitle className="text-crl-deep-purple">Login</CardTitle>
+      </CardHeader>
+      <CardContent>
+        {data.loginMessage ? (
+          <div className="text-sm text-red-500">{data.loginMessage}</div>
+        ) : null}
+        <FormLoginForm formError={data.formError} />
+      </CardContent>
+    </Card>
   );
 }

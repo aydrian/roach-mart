@@ -31,7 +31,7 @@ export const action = async ({ request }: DataFunctionArgs) => {
     );
   }
   const redirectTo =
-    (await redirectToCookie.parse(request.headers.get("Cookie"))) ?? "/catalog";
+    (await redirectToCookie.parse(request.headers.get("Cookie"))) ?? "/";
 
   try {
     await authenticator.authenticate(FormStrategy.name, request, {
