@@ -13,14 +13,23 @@ datasource db {
 }
 
 model User {
-  id           String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  createdAt    DateTime?  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt    DateTime?  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
-  username     String     @unique
-  passwordHash String     @map("password_hash")
-  cartItems    CartItem[]
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime   @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  username  String     @unique
+  password  Password?
+  cartItems CartItem[]
 
   @@map("users")
+}
+
+model Password {
+  hash String
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String @unique @map("user_id") @db.Uuid
+
+  @@map("passwords")
 }
 
 model Product {

@@ -3,10 +3,15 @@ erDiagram
 
   "users" {
     String id "🗝️"
-    DateTime created_at "❓"
-    DateTime updated_at "❓"
+    DateTime created_at 
+    DateTime updated_at 
     String username 
-    String password_hash 
+    }
+  
+
+  "passwords" {
+    String hash 
+    String user_id 
     }
   
 
@@ -30,7 +35,9 @@ erDiagram
     DateTime crdb_internal_expiration "❓"
     }
   
+    "users" o{--}o "passwords" : "password"
     "users" o{--}o "cart_items" : "cartItems"
+    "passwords" o|--|| "users" : "user"
     "products" o{--}o "cart_items" : "inCarts"
     "cart_items" o|--|| "products" : "product"
     "cart_items" o|--|| "users" : "user"

@@ -2,6 +2,7 @@ import { conform, useForm } from "@conform-to/react";
 import { getFieldsetConstraint, parse } from "@conform-to/zod";
 import { type DataFunctionArgs, json } from "@remix-run/node";
 import { Link, useFetcher } from "@remix-run/react";
+import { FormStrategy } from "remix-auth-form";
 import { z } from "zod";
 
 import { ErrorList, Field, SubmitButton } from "~/components/form";
@@ -64,7 +65,7 @@ export const action = async ({ request }: DataFunctionArgs) => {
     (await redirectToCookie.parse(request.headers.get("Cookie"))) ?? "/catalog";
 
   // Sign in
-  await authenticator.authenticate("form", request, {
+  await authenticator.authenticate(FormStrategy.name, request, {
     context: { formData },
     failureRedirect: "/",
     successRedirect: redirectTo

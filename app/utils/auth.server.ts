@@ -47,15 +47,18 @@ export async function verifyLogin(
   password: string
 ) {
   const userWithPassword = await prisma.user.findUnique({
-    select: { id: true, passwordHash: true },
+    select: { id: true, password: { select: { hash: true } } },
     where: { username }
   });
 
-  if (!userWithPassword || !userWithPassword.passwordHash) {
+  if (!userWithPassword || !userWithPassword.password?.hash) {
     return null;
   }
 
-  const isValid = await bcrypt.compare(password, userWithPassword.passwordHash);
+  const isValid = await bcrypt.compare(
+    password,
+    userWithPassword.password.hash
+  );
 
   if (!isValid) {
     return null;
@@ -65,11 +68,13 @@ export async function verifyLogin(
 }
 
 export async function signUp(username: User["username"], password: string) {
-  const passwordHash = await bcrypt.hash(password, 10);
+  const hash = await bcrypt.hash(password, 10);
 
   const user = await prisma.user.create({
     data: {
-      passwordHash,
+      password: {
+        create: { hash }
+      },
       username
     },
     select: { id: true }
