@@ -1,5 +1,7 @@
 import type { Config } from "tailwindcss";
 
+import defaultTheme from "tailwindcss/defaultTheme";
+
 export default {
   content: ["./app/**/*.{js,jsx,ts,tsx}"],
   darkMode: ["class"],
@@ -82,7 +84,9 @@ export default {
         }
       },
       fontFamily: {
-        poppins: ["'Poppins'", "sans-serif"]
+        poppins: ["'Poppins'", "sans-serif"],
+        roboto: ["'Roboto'", "sans-serif"],
+        sans: ["'Roboto'", ...defaultTheme.fontFamily.sans]
       },
       keyframes: {
         "accordion-down": {

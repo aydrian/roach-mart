@@ -15,6 +15,7 @@ export const meta: V2_MetaFunction = () => [{ title: "Roach Mart" }];
 
 export const links: LinksFunction = () => [
   { href: "/fonts/poppins/font.css", rel: "stylesheet" },
+  { href: "/fonts/roboto/font.css", rel: "stylesheet" },
   { href: styles, rel: "stylesheet" },
   { href: "/favicon.ico", rel: "icon" },
   { href: "/site.webmanifest", rel: "manifest" },
