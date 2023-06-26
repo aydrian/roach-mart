@@ -2,7 +2,7 @@ import type { DataFunctionArgs, V2_MetaFunction } from "@remix-run/node";
 
 import { Prisma } from "@prisma/client";
 import { Response, json } from "@remix-run/node";
-import { Form, Link, useLoaderData, useRevalidator } from "@remix-run/react";
+import { Form, Link, useLoaderData, useSubmit } from "@remix-run/react";
 import { Fragment } from "react";
 import invariant from "tiny-invariant";
 
@@ -61,7 +61,7 @@ export const action = async ({ request }: DataFunctionArgs) => {
 
 export default function ShoppingCart() {
   const { items, total } = useLoaderData<typeof loader>();
-  const revalidator = useRevalidator();
+  const submit = useSubmit();
   const numFormat = new Intl.NumberFormat("en-US", {
     currency: "USD",
     style: "currency"
@@ -77,8 +77,8 @@ export default function ShoppingCart() {
       </div>
       <div className="container h-full w-full bg-[url('/images/bg-texture.svg')] bg-auto bg-left-top bg-no-repeat py-10">
         {items.length > 0 ? (
-          <div className=" mx-auto max-w-5xl">
-            <ul className=" grid gap-8 lg:gap-4">
+          <div className="mx-auto max-w-2xl">
+            <ul className="grid gap-8 md:gap-4">
               {items.map((item, index) => {
                 const {
                   expiration,
@@ -87,10 +87,10 @@ export default function ShoppingCart() {
                 } = item;
                 return (
                   <Fragment key={index}>
-                    <li className="flex flex-col items-center justify-start gap-4 rounded-sm bg-white p-4 shadow md:justify-between lg:flex-row lg:gap-6 lg:bg-transparent lg:shadow-none ">
+                    <li className="flex flex-col items-center justify-start gap-4 rounded-sm bg-white p-4 shadow md:flex-row md:justify-between md:gap-6 md:bg-transparent md:shadow-none ">
                       <img
                         alt={item.product.name}
-                        className="w-full rounded-sm lg:max-w-[160px]"
+                        className="w-full rounded-sm md:max-w-[8.5rem]"
                         src={item.product.imgUrl}
                       />
                       <div className="flex h-full w-full grow flex-col justify-center">
@@ -99,24 +99,24 @@ export default function ShoppingCart() {
                           {numFormat.format(Number(price.toString()))}
                         </div>
                       </div>
-                      <div className="flex h-full w-full items-center gap-2 lg:justify-center lg:border-x lg:border-x-gray-300">
+                      <div className="flex h-full w-full items-center gap-2 md:justify-center md:border-x md:border-x-gray-300">
                         {expiration ? (
                           <CountDown
                             onEnd={() => {
-                              if (revalidator.state === "idle") {
-                                revalidator.revalidate();
-                              }
+                              const formData = new FormData();
+                              formData.append("intent", "refresh");
+                              submit(formData, { method: "post" });
                             }}
                             endDate={expiration}
                           />
                         ) : null}
                       </div>
-                      <div className="w-full lg:w-auto">
-                        <Form className="p-0 lg:px-8" method="post" replace>
+                      <div className="w-full md:w-auto">
+                        <Form className="p-0 md:px-4" method="post" replace>
                           <input name="id" type="hidden" value={id} />
                           <Button
                             aria-label="Delete Item"
-                            className="w-full bg-[#d9d9d9] p-1 lg:w-auto"
+                            className="w-full bg-[#d9d9d9] p-1 md:w-auto"
                             name="intent"
                             size="sm"
                             type="submit"
@@ -124,17 +124,19 @@ export default function ShoppingCart() {
                             variant="secondary"
                           >
                             <Trash className="h-6 w-auto" />
-                            <span className="block lg:hidden">Delete</span>
+                            <span className="ml-1 block text-lg md:hidden">
+                              Delete
+                            </span>
                           </Button>
                         </Form>
                       </div>
                     </li>
-                    <hr className="m-0 hidden lg:block" />
+                    <hr className="m-0 hidden md:block" />
                   </Fragment>
                 );
               })}
             </ul>
-            <div className="flex justify-between p-4 lg:p-8">
+            <div className="flex justify-between p-4 md:p-8">
               <strong>Total</strong>
               <span className="text-sm text-crl-electric-purple">
                 {numFormat.format(total)}
@@ -170,7 +172,7 @@ function CountDown({
     onEnd
   );
   if (remainingMS <= 0) {
-    return <span className="text-[#959ead]">Expired</span>;
+    return <span className="text-xs text-[#959ead]">Expired</span>;
   }
   return (
     <span className="text-xs">

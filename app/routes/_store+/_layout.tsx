@@ -72,11 +72,11 @@ export default function StoreLayout() {
         <Outlet />
       </main>
       <footer className="flex items-center bg-gradient-to-br from-crl-deep-purple from-45% via-crl-dark-blue to-crl-electric-purple p-2">
-        <div className="container flex flex-col items-center justify-between text-xs text-white md:flex-row">
-          <div className="flex items-center">
+        <div className="container flex items-center justify-between text-xs text-white">
+          <div className="flex items-center justify-start">
             <img
               alt="RoachMart"
-              className="mr-2 inline-block h-[2.125rem]"
+              className="mr-2 hidden h-[2.125rem] sm:inline-block"
               src={icon}
             />{" "}
             © Roach Mart 2022 All Rights Reserved.

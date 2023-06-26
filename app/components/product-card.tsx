@@ -20,7 +20,7 @@ export function ProductCard({ product }: { product: Product }) {
         <div className="flex flex-col gap-2.5 text-left">
           <img
             alt={product.name}
-            className="h-56 w-56 rounded-lg object-cover"
+            className="w-full rounded-lg object-cover sm:max-w-xs"
             src={product.imgUrl}
           />
           <div className="font-medium">{product.name}</div>
