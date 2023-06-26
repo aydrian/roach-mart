@@ -29,7 +29,7 @@ export default function StoreLayout() {
       <header className="fixed w-full">
         <div className="flex min-h-[90px] items-center bg-white">
           <div className="container flex h-full justify-between">
-            <img alt="RoachMart" className="h-6 w-auto sm:h-12" src={logo} />
+            <img alt="RoachMart" className="h-7 w-auto sm:h-12" src={logo} />
             <div className="flex items-center gap-4">
               <Link className="relative p-0.5" to="/cart">
                 <Cart className="inline-block h-6 w-auto text-[#637381]" />

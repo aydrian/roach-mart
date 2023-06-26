@@ -20,7 +20,7 @@ export const meta: V2_MetaFunction = () => {
 export const loader: LoaderFunction = async () => {
   const products = await prisma.product.findMany({
     orderBy: {
-      createdAt: "asc"
+      name: "asc"
     },
     select: {
       description: true,
@@ -69,7 +69,7 @@ export default function Catalog() {
         <h2 className="text-center font-poppins text-2xl font-semibold text-crl-deep-purple md:text-4xl">
           Latest Products
         </h2>
-        <div className="flex w-full flex-col justify-center gap-8 py-10 text-center md:flex-row">
+        <div className="flex w-full flex-col justify-center gap-8 py-10 text-center sm:flex-row sm:flex-wrap">
           {products.map((product: Product) => {
             return <ProductCard key={product.id} product={product} />;
           })}

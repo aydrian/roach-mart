@@ -2,22 +2,16 @@ import type { DataFunctionArgs, V2_MetaFunction } from "@remix-run/node";
 
 import { Prisma } from "@prisma/client";
 import { Response, json } from "@remix-run/node";
-import { Form, Link, useLoaderData } from "@remix-run/react";
+import { Form, Link, useLoaderData, useRevalidator } from "@remix-run/react";
+import { Fragment } from "react";
 import invariant from "tiny-invariant";
 
-import { CountdownTimer } from "~/components/countdown-timer";
 import { Cart, Trash } from "~/components/icons";
 import { Button } from "~/components/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableFooter,
-  TableRow
-} from "~/components/ui/table";
+import useCountdownTimer from "~/hooks/use-countdown-timer";
 import { requireUserId } from "~/utils/auth.server";
 import { prisma } from "~/utils/db.server";
-import { Fragment } from "react";
+import { cn } from "~/utils/misc";
 
 export const meta: V2_MetaFunction = () => {
   return [{ title: "Roach Mart: Cart" }];
@@ -67,6 +61,7 @@ export const action = async ({ request }: DataFunctionArgs) => {
 
 export default function ShoppingCart() {
   const { items, total } = useLoaderData<typeof loader>();
+  const revalidator = useRevalidator();
   const numFormat = new Intl.NumberFormat("en-US", {
     currency: "USD",
     style: "currency"
@@ -86,9 +81,9 @@ export default function ShoppingCart() {
             <ul className=" grid gap-8 lg:gap-4">
               {items.map((item, index) => {
                 const {
+                  expiration,
                   id,
-                  product: { name, price },
-                  expiration
+                  product: { name, price }
                 } = item;
                 return (
                   <Fragment key={index}>
@@ -105,12 +100,16 @@ export default function ShoppingCart() {
                         </div>
                       </div>
                       <div className="flex h-full w-full items-center gap-2 lg:justify-center lg:border-x lg:border-x-gray-300">
-                        Expires in{" "}
-                        <CountdownTimer
-                          targetDate={
-                            expiration ? new Date(expiration) : new Date()
-                          }
-                        />
+                        {expiration ? (
+                          <CountDown
+                            onEnd={() => {
+                              if (revalidator.state === "idle") {
+                                revalidator.revalidate();
+                              }
+                            }}
+                            endDate={expiration}
+                          />
+                        ) : null}
                       </div>
                       <div className="w-full lg:w-auto">
                         <Form className="p-0 lg:px-8" method="post" replace>
@@ -144,62 +143,6 @@ export default function ShoppingCart() {
             <hr />
           </div>
         ) : (
-          // <Table className="mx-auto mb-10 max-w-4xl border-separate border-spacing-x-0 border-spacing-y-8">
-          //   <TableBody>
-          //     {items.map((item) => (
-          //       <TableRow className="p-2" key={item.id}>
-          //         <TableCell className="p-2">
-          //           <img
-          //             alt={item.product.name}
-          //             className="h-24 w-auto rounded-sm"
-          //             src={item.product.imgUrl}
-          //           />
-          //         </TableCell>
-          //         <TableCell className="p-2 font-medium">
-          //           <div>{item.product.name}</div>
-          //           <div className="text-sm text-crl-electric-purple">
-          //             {numFormat.format(Number(item.product.price.toString()))}
-          //           </div>
-          //         </TableCell>
-          //         <TableCell className="border-x p-2 text-center text-sm text-[#959ead]">
-          //           Expires in{" "}
-          //           <CountdownTimer
-          //             targetDate={
-          //               item.expiration ? new Date(item.expiration) : new Date()
-          //             }
-          //           />
-          //         </TableCell>
-          //         <TableCell className="p-2">
-          //           <Form className="flex justify-center" method="post" replace>
-          //             <input name="id" type="hidden" value={item.id} />
-          //             <Button
-          //               aria-label="Delete Item"
-          //               className="bg-[#d9d9d9] p-1"
-          //               name="intent"
-          //               size="sm"
-          //               type="submit"
-          //               value="deleteItem"
-          //               variant="secondary"
-          //             >
-          //               <Trash className="h-6 w-auto" />
-          //               <span className="sr-only">Delete</span>
-          //             </Button>
-          //           </Form>
-          //         </TableCell>
-          //       </TableRow>
-          //     ))}
-          //   </TableBody>
-          //   <TableFooter className="bg-transparent">
-          //     <TableRow className="border-t">
-          //       <TableCell className="text-black">Total</TableCell>
-          //       <TableCell />
-          //       <TableCell />
-          //       <TableCell className="text-right text-crl-electric-purple">
-          //         {numFormat.format(total)}
-          //       </TableCell>
-          //     </TableRow>
-          //   </TableFooter>
-          // </Table>
           <div className="flex h-full w-full flex-col items-center gap-1.5">
             <Cart className="h-16 w-auto text-[#637381]" />
             <h2 className="text-center font-poppins text-2xl font-semibold text-crl-deep-purple">
@@ -212,5 +155,38 @@ export default function ShoppingCart() {
         )}
       </div>
     </>
+  );
+}
+
+function CountDown({
+  endDate,
+  onEnd
+}: {
+  endDate: Date | string;
+  onEnd: Function;
+}) {
+  const { hours, minutes, remainingMS, seconds } = useCountdownTimer(
+    endDate,
+    onEnd
+  );
+  if (remainingMS <= 0) {
+    return <span className="text-[#959ead]">Expired</span>;
+  }
+  return (
+    <span className="text-xs">
+      <span className="text-[#959ead]">Expires in </span>
+      <span
+        className={cn(
+          "text-[#555b65]",
+          remainingMS < 10 * 60 * 1000 && "text-yellow-600",
+          remainingMS < 1 * 60 * 1000 && "text-red-600",
+          remainingMS < 10 * 1000 && "animate-pulse"
+        )}
+      >
+        {hours.toString().padStart(2, "0")}:
+        {minutes.toString().padStart(2, "0")}:
+        {seconds.toString().padStart(2, "0")}
+      </span>
+    </span>
   );
 }
