@@ -1,5 +1,6 @@
 import { type DataFunctionArgs } from "@remix-run/node";
 import { Link, Outlet, useLoaderData } from "@remix-run/react";
+import { Fragment } from "react";
 
 import { Cart, Line, User } from "~/components/icons";
 import { GitHub } from "~/components/logos";
@@ -24,12 +25,12 @@ export default function StoreLayout() {
   const { user } = useLoaderData<typeof loader>();
   const cartItemCount = user?.cartItems?.length ?? 0;
   return (
-    <div className="grid min-h-screen grid-rows-[130px_auto_60px] bg-[#f5f5f5]">
-      <header className="grid grid-rows-[90px_40px]">
-        <div className="bg-white">
-          <div className="container flex h-full flex-col items-center justify-between md:flex-row">
-            <img alt="RoachMart" className="h-12 w-auto" src={logo} />
-            <div className="flex gap-4">
+    <Fragment>
+      <header className="fixed w-full">
+        <div className="flex min-h-[90px] items-center bg-white">
+          <div className="container flex h-full justify-between">
+            <img alt="RoachMart" className="h-6 w-auto sm:h-12" src={logo} />
+            <div className="flex items-center gap-4">
               <Link className="relative p-0.5" to="/cart">
                 <Cart className="inline-block h-6 w-auto text-[#637381]" />
                 {cartItemCount > 0 ? (
@@ -40,7 +41,7 @@ export default function StoreLayout() {
               </Link>
               <Line className="h-[30px] w-auto text-[#dde3e7]" />
               <div className="flex items-center gap-3">
-                <User className="inline-block h-6 w-auto text-black" />
+                <User className="hidden h-6 w-auto text-black sm:inline-block" />
                 {user ? (
                   <Link
                     className="font-medium text-crl-electric-purple"
@@ -60,14 +61,14 @@ export default function StoreLayout() {
             </div>
           </div>
         </div>
-        <div className="bg-crl-dark-blue font-medium text-white">
-          <div className="container flex h-full items-center justify-between">
+        <div className="flex min-h-[40px] items-center bg-crl-dark-blue font-medium text-white">
+          <div className="container flex justify-between">
             <Link to="/">Home</Link>
             {user ? <span>Welcome, {user.username}</span> : null}
           </div>
         </div>
       </header>
-      <main>
+      <main className="min-h-[calc(100vh-50px)] bg-[#f5f5f5] pt-[130px]">
         <Outlet />
       </main>
       <footer className="flex items-center bg-gradient-to-br from-crl-deep-purple from-45% via-crl-dark-blue to-crl-electric-purple p-2">
@@ -92,6 +93,6 @@ export default function StoreLayout() {
           </div>
         </div>
       </footer>
-    </div>
+    </Fragment>
   );
 }
