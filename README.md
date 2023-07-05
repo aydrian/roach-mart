@@ -34,6 +34,8 @@ This application uses Prisma to manage the database.
    npx prisma migrate deploy
    ```
 
+You can view the [Entity Relationship Diagram](./erd.md) generated from the Prisma Schema.
+
 ### ⏳ Activate Row-Level TTL for the cart_items table
 
 <sup>This only needs to be done once.</sup>
