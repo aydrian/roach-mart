@@ -2,8 +2,9 @@ import type { DataFunctionArgs, V2_MetaFunction } from "@remix-run/node";
 
 import { Prisma } from "@prisma/client";
 import { Response, json } from "@remix-run/node";
-import { Form, Link, useLoaderData, useSubmit } from "@remix-run/react";
+import { Form, Link, useLoaderData, useRevalidator } from "@remix-run/react";
 import { Fragment } from "react";
+import { ClientOnly } from "remix-utils";
 import invariant from "tiny-invariant";
 
 import { Cart, Trash } from "~/components/icons";
@@ -23,14 +24,14 @@ export const loader = async ({ request }: DataFunctionArgs) => {
   const items = await prisma.cartItem.findMany({
     orderBy: { createdAt: "asc" },
     select: {
-      expiration: true,
+      expiredAt: true,
       id: true,
       product: {
         select: { imgUrl: true, name: true, price: true }
       },
       productId: true
     },
-    where: { expiration: { gt: new Date() }, userId }
+    where: { expiredAt: { gt: new Date() }, userId }
   });
 
   const total = items.reduce(
@@ -61,7 +62,7 @@ export const action = async ({ request }: DataFunctionArgs) => {
 
 export default function ShoppingCart() {
   const { items, total } = useLoaderData<typeof loader>();
-  const submit = useSubmit();
+  const revalidator = useRevalidator();
   const numFormat = new Intl.NumberFormat("en-US", {
     currency: "USD",
     style: "currency"
@@ -79,14 +80,14 @@ export default function ShoppingCart() {
         {items.length > 0 ? (
           <div className="mx-auto max-w-2xl">
             <ul className="grid gap-8 md:gap-4">
-              {items.map((item, index) => {
+              {items.map((item) => {
                 const {
-                  expiration,
+                  expiredAt,
                   id,
                   product: { name, price }
                 } = item;
                 return (
-                  <Fragment key={index}>
+                  <Fragment key={id}>
                     <li className="flex flex-col items-center justify-start gap-4 rounded-sm bg-white p-4 shadow md:flex-row md:justify-between md:gap-6 md:bg-transparent md:shadow-none ">
                       <img
                         alt={item.product.name}
@@ -100,14 +101,12 @@ export default function ShoppingCart() {
                         </div>
                       </div>
                       <div className="flex h-full w-full items-center gap-2 md:justify-center md:border-x md:border-x-gray-300">
-                        {expiration ? (
+                        {expiredAt ? (
                           <CountDown
                             onEnd={() => {
-                              const formData = new FormData();
-                              formData.append("intent", "refresh");
-                              submit(formData, { method: "post" });
+                              revalidator.revalidate();
                             }}
-                            endDate={expiration}
+                            endDate={expiredAt}
                           />
                         ) : null}
                       </div>
@@ -171,24 +170,25 @@ function CountDown({
     endDate,
     onEnd
   );
-  if (remainingMS <= 0) {
-    return <span className="text-xs text-[#959ead]">Expired</span>;
-  }
   return (
-    <span className="text-xs">
-      <span className="text-[#959ead]">Expires in </span>
-      <span
-        className={cn(
-          "text-[#555b65]",
-          remainingMS < 10 * 60 * 1000 && "text-yellow-600",
-          remainingMS < 1 * 60 * 1000 && "text-red-600",
-          remainingMS < 10 * 1000 && "animate-pulse"
-        )}
-      >
-        {hours.toString().padStart(2, "0")}:
-        {minutes.toString().padStart(2, "0")}:
-        {seconds.toString().padStart(2, "0")}
-      </span>
-    </span>
+    <ClientOnly>
+      {() => (
+        <span className="text-xs">
+          <span className="text-[#959ead]">Expires in </span>
+          <span
+            className={cn(
+              "text-[#555b65]",
+              remainingMS < 10 * 60 * 1000 && "text-yellow-600",
+              remainingMS < 1 * 60 * 1000 && "text-red-600",
+              remainingMS < 10 * 1000 && "animate-pulse"
+            )}
+          >
+            {hours.toString().padStart(2, "0")}:
+            {minutes.toString().padStart(2, "0")}:
+            {seconds.toString().padStart(2, "0")}
+          </span>
+        </span>
+      )}
+    </ClientOnly>
   );
 }

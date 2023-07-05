@@ -12,7 +12,7 @@ export const loader = async ({ request }: DataFunctionArgs) => {
   const user = await getUser(request, {
     cartItems: {
       select: { id: true },
-      where: { expiration: { gt: new Date() } }
+      where: { expiredAt: { gt: new Date() } }
     },
     id: true,
     username: true

@@ -32,7 +32,7 @@ erDiagram
     String product_id 
     String user_id 
     DateTime created_at "❓"
-    DateTime crdb_internal_expiration "❓"
+    DateTime expired_at "❓"
     }
   
     "users" o{--}o "passwords" : "password"

@@ -27,7 +27,7 @@ export default function useCountdownTimer(
   useInterval(
     () => {
       const remaining = countDownDate - getNowTime();
-      setHasEnded(remaining <= 0);
+      setHasEnded(remaining <= 1);
       setRemainingMS(remaining);
     },
     hasEnded ? null : 1000
@@ -44,6 +44,9 @@ export default function useCountdownTimer(
 
 const getRemainingSplit = (countDown: number) => {
   // calculate time left
+  if (countDown <= 0) {
+    return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+  }
   const days = Math.floor(countDown / (1000 * 60 * 60 * 24));
   const hours = Math.floor(
     (countDown % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)

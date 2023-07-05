@@ -24,7 +24,7 @@ export function ProductCard({ product }: { product: Product }) {
             src={product.imgUrl}
           />
           <div className="font-medium">{product.name}</div>
-          <div className="text-sm">{product.description}</div>
+          <div className="text-sm sm:max-w-[18rem]">{product.description}</div>
           <div className="text-sm font-medium text-crl-electric-purple">
             {new Intl.NumberFormat("en-US", {
               currency: "USD",
