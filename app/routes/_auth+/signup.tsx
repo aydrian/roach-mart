@@ -62,7 +62,7 @@ export const action = async ({ request }: DataFunctionArgs) => {
   await signUp(username, password);
 
   const redirectTo =
-    (await redirectToCookie.parse(request.headers.get("Cookie"))) ?? "/catalog";
+    (await redirectToCookie.parse(request.headers.get("Cookie"))) ?? "/";
 
   // Sign in
   await authenticator.authenticate(FormStrategy.name, request, {
